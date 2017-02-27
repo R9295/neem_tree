@@ -10,10 +10,11 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
   </head>
   <body>
+  <div align="center">
     {% for i in transactions %}
-    {{i['amount']}},{{i['type']}},{{i['intern_name']}},{{i['date']}}, Done By    {{i['done_by']}}<br>
+    Amount  :  {{i['amount']}}<br>Type  :  {{i['type']}}<br>Intern Name  :  {{i['intern_name']}}<br>Date  :  {{i['date']}}<br> Done By  :  {{i['done_by']}}<br><br><br>
     {% endfor %}
-
+</div>
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
