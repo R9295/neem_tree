@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <title>Sign Up</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  </head>
+  <body>
+    <h1 align="center">Sign Up</h1>
+    <br><br><br><br>
+
+    <h1 align="center">Unit Holder</h1>
+    <div class="container">
+    <input type="text" name="" class="form-control" id="person_name" placeholder="Your Name">
+    <input type="password" name="" class="form-control" id="password" placeholder="Password">
+    <input type="text" name="" class="form-control" id="unit_name" placeholder="Unit Name">
+    <input type="text" name="" class="form-control" id="email" placeholder="Email">
+    <input type="text" name="" class="form-control" id="phone_number" placeholder="Phone Number">
+    <div id="callback_unit" style="color:red;"></div>
+    <button id="submit">Sumbit</button>
+      
+    </div>
+<br><br><br><br>
+<h1 align="center">Neem Tree Staff</h1>
+    <div class="container">
+    <input type="text" name="" class="form-control" id="name_neem" placeholder="Name">
+    <input type="password" name="" class="form-control" id="password_neem" placeholder="Password">
+    <input type="text" name="" class="form-control" id="email_neem" placeholder="Email">
+    <input type="text" name="" class="form-control" id="phone_number_neem" placeholder="Phone Number">
+    <div id="callback_staff" style="color:red;"></div>
+    <button id="neem_submit">Sumbit</button>
+      
+    </div>
+
+
+
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script
+        src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  </body>
+
+  <script type="text/javascript">
+
+   //Submiting Unit Holder
+  $("#submit").on('click', function(){
+    var person_name = $("#person_name").val();
+    var password = $("#password").val();
+    var unit_name = $("#unit_name").val();
+    var email = $("#email").val();
+    var phone_number = $("#phone_number").val();
+    
+    //checking if values are not empty, if not, post!
+    if (person_name.length ===0) {
+      console.log('Person Name is empty');
+    }
+    else if(password.length === 0){
+      console.log('Password is empty'); 
+    }
+
+    else if(email.length === 0){
+      console.log('Email is empty');
+
+    }
+  else if(phone_number.length === 0){
+      console.log('Phone Number is empty');
+
+    }
+
+    else if(unit_name.length === 0){
+      console.log('Unit Name is empty');
+
+    }
+    else{
+      data = JSON.stringify({'person_name':person_name,'password':password,'unit_name':unit_name,'email':email,
+        'phone_number':phone_number})
+          $.ajax({
+  type: "POST",
+  url: '/add_unit_holder',
+  contentType:"application/json; charset=utf-8",
+  data: data,
+  success: function(data){
+    $("#callback_unit").text(data.response);
+  },
+  dataType: "json"
+});
+  
+
+    }
+  });
+
+    
+
+   //Submiting Neem Tree Staff
+  $("#neem_submit").on('click', function(){
+    var name = $("#name_neem").val();
+    var password = $("#password_neem").val();
+    var email = $("#email_neem").val();
+    var phone_number = $("#phone_number_neem").val();
+    
+    //checking if values are not empty, if not, post!
+    if (person_name.length ===0) {
+      console.log('Person Name is empty');
+    }
+    else if(password.length === 0){
+      console.log('Password is empty'); 
+    }
+
+    else if(email.length === 0){
+      console.log('Email is empty');
+
+    }
+  else if(phone_number.length === 0){
+      console.log('Phone Number is empty');
+
+    }
+
+    else{
+      data = JSON.stringify({'name':name,'password':password,'email':email,'phone_number':phone_number})
+         
+   $.ajax({
+  type: "POST",
+  url: '/add_staff',
+  contentType:"application/json; charset=utf-8",
+  data: data,
+  success: function(data){
+    $("#callback_unit").text(data.response);
+  },
+  dataType: "json"
+});
+  
+
+    }
+  });
+
+    
+</script>
+</html>

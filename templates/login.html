@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <title>Login</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  </head>
+  <body>
+    <h1 align="center">Login</h1>
+    <br><br><br><br>
+
+    
+    <div class="container">
+   
+    
+    <input type="text" name="" class="form-control" id="email" placeholder="Email">
+    <input type="password" name="" class="form-control" id="password" placeholder="Password">
+   
+    <button id="submit">Sumbit</button>
+
+
+
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script
+        src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  </body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.3/js.cookie.min.js"></script>
+
+  <script type="text/javascript">
+
+   //Submiting Unit Holder
+  $("#submit").on('click', function(){
+    var email = $("#email").val();
+    var password = $("#password").val();
+    
+    //checking if values are not empty, if not, post!
+     if(password.length === 0){
+      console.log('Password is empty'); 
+    }
+
+    else if(email.length === 0){
+      console.log('Email is empty');
+
+    }
+ 
+    else{
+      data = JSON.stringify({'password':password,'email':email})
+          $.ajax({
+  type: "POST",
+  url: '/login',
+  contentType:"application/json; charset=utf-8",
+  data: data,
+  success: function(data){
+    Cookies.set('key',data.key);
+    Cookies.set('email',data.email)
+    if (data.type == 'staff') {
+      window.location = "/home/staff";
+    }
+    else{
+      window.location = "/home/unit";
+    }
+  },
+  dataType: "json"
+});
+  
+
+    }
+  });
+
+</script>
+</html>
