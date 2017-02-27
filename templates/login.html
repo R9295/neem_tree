@@ -59,12 +59,13 @@
   contentType:"application/json; charset=utf-8",
   data: data,
   success: function(data){
+    console.log(data)
     Cookies.set('key',data.key);
     Cookies.set('email',data.email)
-    if (data.type == 'staff') {
+    if (data.type === 'staff') {
       window.location = "/home/staff";
     }
-    else{
+    else if (data.type === 'unit'){
       window.location = "/home/unit";
     }
   },

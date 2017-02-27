@@ -14,12 +14,12 @@
     <br><br><br><br>
 
     <div class="container">
-    <input type="text" name="" class="form-control" id="person_name" placeholder="Your Name">
+    <input type="text" name="" class="form-control" id="person_name" placeholder=" Name">
     <input type="text" name="" class="form-control" id="start_date" placeholder="Start Date in DD/MM/YYYY">
-    <input type="text" name="" class="form-control" id="unit_name" placeholder="Unit Name">
     <input type="text" name="" class="form-control" id="email" placeholder="Email">
     <input type="text" name="" class="form-control" id="phone_number" placeholder="Phone Number">
     <input type="text" name="" class="form-control" id="img_url" placeholder="Image URL">
+
     <div id="callback" style="color:red;"></div>
     <button id="submit">Sumbit</button>
       
@@ -38,7 +38,6 @@
   $("#submit").on('click', function(){
     var person_name = $("#person_name").val();
     var start_date = $("#start_date").val();
-    var unit_name = $("#unit_name").val();
     var email = $("#email").val();
     var phone_number = $("#phone_number").val();
     var img_url = $("#img_url").val();
@@ -60,16 +59,12 @@
 
     }
 
-    else if(unit_name.length === 0){
-      console.log('Unit Name is empty');
-
-    }
     else if(img_url.length === 0){
       console.log('Image URL is empty');
 
     }
     else{
-      data = JSON.stringify({'name':person_name,'start_date':start_date,'unit_name':unit_name,'email':email,
+      data = JSON.stringify({'name':person_name,'start_date':start_date,'email':email,
         'phone_number':phone_number, 'img': img_url})
           $.ajax({
   type: "POST",

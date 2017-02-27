@@ -43,7 +43,7 @@ def login():
 		user = db.staff.find({'email': request.json['email']}).count()
 		unit = db.unit_holder.find({'email': request.json['email']}).count()
         if user  == 1:
-			print 'xd'
+			
 			user = db.staff.find_one({'email': request.json['email']})
 			if ph.verify(user['password'],request.json['password']) == True:
 
@@ -54,7 +54,7 @@ def login():
                     'key'  : hashed_key,
                     'type'  : 'staff'
                 }
-				db.active.insert_one(active_user)
+				
 				response = {
 				"response": "success",
 				"email":request.json['email'],
@@ -63,31 +63,33 @@ def login():
 				}
 				
 
-		
+				db.active.insert_one(active_user)
 				response = json.dumps(response)
 				
 				return response
 
 
-        #elif unit == 1:
-		#	user = db.unit_holder.find_one({'email': request.json['email']})
-		#	if ph.verify(user['password'],request.json['password']) == True:
+        elif unit == 1:
+			print 'xd'
+			user = db.unit_holder.find_one({'email': request.json['email']})
+			if ph.verify(user['password'],request.json['password']) == True:
 
-			#	key = key_gen()
-			#	hashed_key = hashpw(key,gensalt())
-			#	active_user = {
-             #       'email' : request.json['email'],
-              #      'key'  : hashed_key,
-              #      'type'  : 'unit'
-              #  }
-			#	response = {
-			#	"response": "success",
-			#	"email":request.json['email'],
-			#	"key": hashed_key,
-			#	"type":"unit"
-			#	}
-			#	response = json.dumps(response)
-			#	return response
+				key = key_gen()
+				hashed_key = hashpw(key,gensalt())
+				active_user = {
+                    'email' : request.json['email'],
+                    'key'  : hashed_key,
+                    'type'  : 'unit'
+                }
+				response = {
+				"response": "success",
+				"email":request.json['email'],
+				"key": hashed_key,
+				"type":"unit"
+				}
+				db.active.insert_one(active_user)
+				response = json.dumps(response)
+				return response
 			
 	return render_template('login.html')
 
@@ -106,8 +108,19 @@ def home_staff():
 	if db.active.find({'key' : key}).count() != 0:
 		user = db.active.find_one({'key' : key})
 		return render_template('home_staff.html',user=user)
-	#else:
-		#return redirect('/login')
+	else:
+		return redirect('/login')
+
+#Unit Holder Homepage
+@app.route('/home/unit')
+def home_unit():
+	key = request.cookies.get('key')
+	error = None
+	if db.active.find({'key' : key}).count() != 0:
+		user = db.active.find_one({'key' : key})
+		return render_template('home_unit.html',user=user)
+	else:
+		return redirect('/login')
 
 
 
@@ -143,7 +156,7 @@ def add_unit_holder():
 	"password": ph.hash(request.json['password']),
 	"name":request.json['person_name'],
 	"email":request.json['email'],
-	"phone_number":request.json['phone_number']
+	"phone_number":request.json['phone_number'],
 	}
 	try:
 		db.unit_holder.insert_one(data)
@@ -165,6 +178,8 @@ def add_an_intern():
 	if db.active.find({'key' : key}).count() != 0:
 		user = db.active.find_one({'key' : key})
 		return render_template('add_intern.html',user=user)
+	else:
+		return redirect('/login')
 
 #Edit Intern Page
 @app.route('/edit/intern/<id>')
@@ -174,6 +189,8 @@ def edit_an_intern(id):
 	if db.active.find({'key' : key}).count() != 0:
 		user = db.active.find_one({'key' : key})
 		return render_template('edit_intern.html',user=user)
+	else:
+		return redirect('/login')
 
 #Intern List 
 @app.route('/interns')
@@ -183,7 +200,14 @@ def intern_list():
 	if db.active.find({'key' : key}).count() != 0:
 		user = db.active.find_one({'key' : key})
 		interns = db.intern.find()
+		if user['type'] == 'unit':
+			unit = db.unit_holder.find_one({'email'  : request.cookies.get('email') })
+			interns = db.intern.find()
+			print db.intern.find({'unit_name'  :  unit['unit_name']}).count()
+			 
 		return render_template('interns.html',user=user,interns=interns)
+	else:
+		return redirect('/login')
 
 #Individual Intern
 @app.route('/<id>')
@@ -195,21 +219,24 @@ def individual_intern(id):
 		intern = db.intern.find_one({'_id': ObjectId(id)})
 		print intern
 		return render_template('intern_page.html',user=user,intern=intern)
+	else:
+		return redirect('/login')
 
 
 #Add Intern API
 @app.route("/add_intern", methods=['POST'])
 def add_intern():
+	email = request.cookies.get('email')
+	user = db.unit_holder.find_one({'email'  : email })
 	data = {
 	"name":request.json['name'],
+	"unit_name":user['unit_name'],
 	"email":request.json['email'],
 	"phone_number":request.json['phone_number'],
-	"unit_name":request.json['unit_name'],
 	"img":request.json['img'],
 	"start_date":request.json['start_date'],
 	"end_date":None,
 	"balance": 0
-
 		}
 	try:
 		db.intern.insert_one(data)
@@ -249,6 +276,8 @@ def view_transactions():
 		user = db.active.find_one({'key' : key})
 		transactions = db.transactions.find()
 		return render_template('view_transactions.html',user=user,transactions=transactions)
+	else:
+		return redirect('/login')
 
 
 #Commit Transaction
@@ -259,6 +288,8 @@ def transaction():
 	if db.active.find({'key' : key}).count() != 0:
 		user = db.active.find_one({'key' : key})
 		return render_template('transaction.html',user=user)
+	else:
+		return redirect('/login')
 
 #Transaction Money In API
 @app.route('/money_in', methods=['POST'])
@@ -308,19 +339,37 @@ def money_out():
 	intern = db.intern.find({'name'  :  data['intern_name']}).count()
 	if intern == 1:
 		intern = db.intern.find_one({'name'  :  data['intern_name']})
-		intern['balance'] =intern['balance'] - data['amount']
-		db.intern.save(intern)
-		response = {}
-		response['response'] = 'success'
-		response = json.dumps(response)
-		db.transactions.insert_one(data)
-		return response
-		
+		if data['amount'] < intern['balance']:
+			intern['balance'] =intern['balance'] - data['amount']
+			db.intern.save(intern)
+			response = {}
+			response['response'] = 'success'
+			response = json.dumps(response)
+			db.transactions.insert_one(data)
+			return response
+		else:
+			response = {}
+			response['response'] = 'Not Enough Balance'
+			response = json.dumps(response)
+			return response
+
 	else:
 		response = {}
 		response['response'] = 'User Not Found'
 		response = json.dumps(response)
 		return response
+
+
+@app.route('/logout')
+def logout():
+	key = request.cookies.get('key')
+	error = None
+	if db.active.find({'key' : key}).count() != 0:
+		db.active.remove({'key':key})
+		resp = make_response(redirect('/'))
+    	resp.set_cookie('key','',expires=0)
+    	resp.set_cookie('email','',expires=0)
+    	return resp
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0',port=5000)
