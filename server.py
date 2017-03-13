@@ -1,4 +1,4 @@
-from flask import Flask,render_template,redirect,request,make_response,redirect,url_for
+from flask import Flask,render_template,redirect,request,make_response,redirect,url_for,jsonify
 from pymongo import MongoClient
 from argon2 import PasswordHasher
 import json
@@ -301,6 +301,34 @@ def view_transactions():
 		return redirect('/login')
 
 
+
+#Searches for interns and returns results.
+@app.route('/search', methods=['GET','POST'])
+def search():
+	results = []
+	query = request.json['query']
+	search_results = db.intern.find({'name': {'$regex' : query}})
+	if search_results != None:
+		for i in search_results:
+			results.append(i['name'])
+		response = {}
+		response['response'] = results
+		response = json.dumps(response)
+		return response
+	else:
+		response = {}
+		response['response'] = "No Interns Found "
+		response = json.dumps(response)
+		return response	
+			
+
+
+
+
+
+
+
+
 #Commit Transaction
 @app.route("/transaction")
 def transaction():
@@ -379,6 +407,7 @@ def money_out():
 		response['response'] = 'User Not Found'
 		response = json.dumps(response)
 		return response
+
 
 
 @app.route('/logout')

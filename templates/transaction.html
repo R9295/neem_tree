@@ -29,6 +29,8 @@
     <button id="submit_in">Sumbit</button>
     </div>
 
+<br><br><br><br>
+<div id="results"></div>
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
@@ -115,6 +117,47 @@
 
     }
   });
+
+
+
+//Search
+
+    $('#person_name_out').keyup(function(){
+    var search_term = $(this).val();
+
+    if(search_term != ''){
+
+$.ajax({
+  type: "POST",
+  contentType: "application/json; charset=utf-8",
+  url: "/search",
+  dataType: "json",
+  data: JSON.stringify({'query': search_term}),
+  success: function (data) {
+
+
+   if (data.response.length != 0){
+    for (i = 0; i < data.response.length; i++){
+      $("#results").html(
+        '<h3>'+data.response[i]+'</h3>'
+        )
+    }} 
+    else{
+      $("#results").html(
+        '<h3>'+'No results'+'</h3>'
+        )
+
+    }
+    
+
+
+
+    }
+
+  });
+
+}
+});
 
     
 </script>
