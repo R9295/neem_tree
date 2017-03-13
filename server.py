@@ -9,11 +9,16 @@ from time import gmtime, strftime
 import string 
 import random
 from time import gmtime,strftime
-from bson.objectid import ObjectId
+from flask_uploads import UploadSet, configure_uploads, IMAGES
+
+
+
 
 #Connecting to DB
 client = MongoClient()
 db = client.neemtree
+
+
 
 
 # id_generator
@@ -23,6 +28,14 @@ def key_gen(size=10, chars=string.ascii_uppercase + string.digits):
 ph = PasswordHasher()
 
 app = Flask(__name__)
+
+
+
+#Configuring where photos should be uploaded.
+photos = UploadSet('photos', IMAGES)
+app.config['UPLOADED_PHOTOS_DEST'] = 'static/img'
+
+
 
 #Login for Unit Holder and Neem Tree Staff
 @app.route("/")
@@ -171,12 +184,47 @@ def add_unit_holder():
 		return response
 
 
-@app.route('/add/intern')
+@app.route('/add/intern', methods=['GET','POST'])
 def add_an_intern():
 	key = request.cookies.get('key')
 	error = None
 	if db.active.find({'key' : key}).count() != 0:
 		user = db.active.find_one({'key' : key})
+			
+
+
+		if request.method == 'POST':
+
+				email = request.cookies.get('email')
+				user = db.unit_holder.find_one({'email'  : email })
+				filename = photos.save(request.files['img'])
+				data = {
+				"name":request.form['name'],
+				"unit_name":user['unit_name'],
+				"email":request.form['email'],
+				"phone_number":request.form['phone_number'],
+				"start_date":request.form['start_date'],
+				"end_date":None,
+				"balance": 0,
+				"img": filename
+				}
+
+				
+
+				try:
+					db.intern.insert_one(data)
+					response = {}
+					response['response'] = 'success'
+					response = json.dumps(response)
+					return response					
+				except:
+					response = {}
+					response['response'] = "failure"
+					response = json.dumps(response)
+					return response	
+			
+
+
 		return render_template('add_intern.html',user=user)
 	else:
 		return redirect('/login')
@@ -216,6 +264,7 @@ def individual_intern(id):
 	error = None
 	if db.active.find({'key' : key}).count() != 0:
 		user = db.active.find_one({'key' : key})
+		print 'XDDXD'
 		intern = db.intern.find_one({'_id': ObjectId(id)})
 		print intern
 		return render_template('intern_page.html',user=user,intern=intern)
@@ -226,31 +275,7 @@ def individual_intern(id):
 #Add Intern API
 @app.route("/add_intern", methods=['POST'])
 def add_intern():
-	email = request.cookies.get('email')
-	user = db.unit_holder.find_one({'email'  : email })
-	data = {
-	"name":request.json['name'],
-	"unit_name":user['unit_name'],
-	"email":request.json['email'],
-	"phone_number":request.json['phone_number'],
-	"img":request.json['img'],
-	"start_date":request.json['start_date'],
-	"end_date":None,
-	"balance": 0
-		}
-	try:
-		db.intern.insert_one(data)
-		response = {}
-		response['response'] = 'success'
-		response = json.dumps(response)
-		return response
-	except:
-		response = {}
-		response['response'] = "failure"
-		response = json.dumps(response)
-		return response	
-
-
+	pass
 #Edit Intern API
 @app.route("/edit_intern", methods=['POST'])
 def edit_intern():
@@ -261,10 +286,6 @@ def edit_intern():
 @app.route("/remove_intern", methods=['POST'])
 def remove_intern():
 	pass
-
-
-
-#Transactions
 
 
 #View Transactions
@@ -372,4 +393,5 @@ def logout():
     	return resp
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0',port=5000)
+	configure_uploads(app, photos)
+	app.run(debug=True, host='0.0.0.0',port=5000)
