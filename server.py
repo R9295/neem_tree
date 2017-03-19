@@ -10,7 +10,8 @@ import string
 import random
 from time import gmtime,strftime
 from flask_uploads import UploadSet, configure_uploads, IMAGES
-
+from datetime import *
+import datetime
 
 
 
@@ -131,6 +132,7 @@ def home_unit():
 	error = None
 	if db.active.find({'key' : key}).count() != 0:
 		user = db.active.find_one({'key' : key})
+		user = db.unit_holder.find_one({'email':user['email']})
 		return render_template('home_unit.html',user=user)
 	else:
 		return redirect('/login')
@@ -251,7 +253,8 @@ def intern_list():
 		if user['type'] == 'unit':
 			unit = db.unit_holder.find_one({'email'  : request.cookies.get('email') })
 			interns = db.intern.find()
-			print db.intern.find({'unit_name'  :  unit['unit_name']}).count()
+			user = db.active.find_one({'key' : key})
+			user = db.unit_holder.find_one({'email':user['email']})
 			 
 		return render_template('interns.html',user=user,interns=interns)
 	else:
@@ -264,18 +267,14 @@ def individual_intern(id):
 	error = None
 	if db.active.find({'key' : key}).count() != 0:
 		user = db.active.find_one({'key' : key})
-		print 'XDDXD'
 		intern = db.intern.find_one({'_id': ObjectId(id)})
-		print intern
+		user = db.unit_holder.find_one({'email':user['email']})
 		return render_template('intern_page.html',user=user,intern=intern)
 	else:
 		return redirect('/login')
 
 
-#Add Intern API
-@app.route("/add_intern", methods=['POST'])
-def add_intern():
-	pass
+
 #Edit Intern API
 @app.route("/edit_intern", methods=['POST'])
 def edit_intern():
@@ -295,7 +294,7 @@ def view_transactions():
 	error = None
 	if db.active.find({'key' : key}).count() != 0:
 		user = db.active.find_one({'key' : key})
-		transactions = db.transactions.find()
+		transactions = db.transactions.find().sort([('_id', -1)])
 		return render_template('view_transactions.html',user=user,transactions=transactions)
 	else:
 		return redirect('/login')
@@ -310,10 +309,11 @@ def search():
 	search_results = db.intern.find({'name': {'$regex' : query}})
 	if search_results != None:
 		for i in search_results:
-			results.append(i['name'])
+			results.append([i['name'],i['img'],str(i['_id']), i['email'], i['unit_name']])
 		response = {}
 		response['response'] = results
 		response = json.dumps(response)
+		print response
 		return response
 	else:
 		response = {}
@@ -344,7 +344,7 @@ def transaction():
 @app.route('/money_in', methods=['POST'])
 def money_in():
 	email = request.cookies.get('email')
-	user = db.staff.find_one({'email'  :  email})
+	user = db.unit_holder.find_one({'email'  :  email})
 	data={
 	"date":strftime("%a, %d %b %Y", gmtime()),
 	"intern_name":request.json['intern_name'],

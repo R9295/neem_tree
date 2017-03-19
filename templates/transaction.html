@@ -18,6 +18,8 @@
     <input type="text" name="" class="form-control" id="amount_out" placeholder="Amount">
     <input type="text" name="" class="form-control" id="reference_out" placeholder="Reference">
      <div id="callback_out" style="color:red;"></div>
+     <div id="results"></div>
+
     <button id="submit_out">Sumbit</button>
     </div>
     <h1 align="center">Money In</h1>
@@ -29,8 +31,6 @@
     <button id="submit_in">Sumbit</button>
     </div>
 
-<br><br><br><br>
-<div id="results"></div>
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
@@ -118,7 +118,12 @@
     }
   });
 
-
+function value_change(xd) {
+      var name = xd;
+      
+     // $("#person_name_out").text(name);
+     console.log(name);
+    }
 
 //Search
 
@@ -137,9 +142,13 @@ $.ajax({
 
 
    if (data.response.length != 0){
+    
+    reply = '';
     for (i = 0; i < data.response.length; i++){
+      var name = data.response[i][0];
+      reply = reply+'<a href="#" onclick="value_change(name)">'+data.response[i][0]+'</a>'+'<br>'
       $("#results").html(
-        '<h3>'+data.response[i]+'</h3>'
+        reply
         )
     }} 
     else{

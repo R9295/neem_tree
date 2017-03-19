@@ -1,0 +1,22 @@
+section{
+	height: 100%;
+}
+
+.card{
+	padding-right: 10px !important;
+}
+
+.content{
+	color:red !important;
+}
+.navbar{
+	font-family: 'Raleway', sans-serif;
+	background-color: black;
+
+}
+
+.dropdown{
+	background-color: transparent;
+	font-size: 1vw;
+	color:red;
+}

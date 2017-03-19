@@ -5,23 +5,108 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+    <link rel= "stylesheet" href= "{{url_for('static',filename='intern_page.css') }}">
+    <link rel= "stylesheet" href= "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/components/card.min.css">
+
   </head>
   <body>
-  <div align="center">
-    Name :  {{intern.name}}<br>
-    Email  :  {{intern.email}}<br>
-    Start Date  :  {{intern.start_date}}<br>
-    Phone Number  :  {{intern.phone_number}}<br>
-    Image URL  :  {{intern.img}}<br>
-    Unit Name  :  {{intern.unit_name}}<br>
-    End Date  :  {{intern.end_date}}<br>
-    Balance  :  {{intern.balance}}<br><br><br>
+<nav class="navbar navbar-toggleable-md navbar-light bg-faded" style="font-family: 'Raleway', sans-serif;
+  background-color: black;">
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" href="#" style="color:red;font-size:1.2vw;">NEEM TREE</a>
 
-    <img src="../static/img/{{intern.img}}">
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/home/unit" style="color:red;font-size:1vw;">Home <span class="sr-only">(current)</span></a>
+      </li>
+    </ul>
+  </div>
 
+  <div class="dropdown" style="background-color: transparent;font-size: 1vw;color:red;">
+  <a class="btn dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 1vw;color:red;">
+    {{user.name}}
+  </a>
+
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+    <a class="dropdown-item" href="#">Settings</a>
+    <a class="dropdown-item" href="/logout">Logout</a>
+  </div>
+</div>
+  </nav>
+  <div class="container">
+    <br>
+
+<div align="center">
+<div class="ui card">
+  <div class="image">
+     <img class="img" src="../static/img/{{intern.img}}">
+  </div>
+  <div class="content">
+    <a class="header">{{intern.name}}</a>
+    <div class="meta">
+      <span class="date">Joined in 2013</span>
+    </div>
+    <div class="description">
+      {{intern.name}} interns at {{intern.unit_name}}<br>
+
+      </div>
+  </div>
+  
+
+  <div class="extra content">
+    <a>
+      <i class="user icon"></i>
+      {{intern.email}}
+    </a>
+  </div>
+
+
+ <div class="extra content">
+    <a>
+      <i class="user icon"></i>
+      {{intern.start_date}}
+    </a>
+  </div>
+
+
+ <div class="extra content">
+    <a>
+      <i class="user icon"></i>
+      {{intern.phone_number}}
+    </a>
+  </div>
+
+
+ <div class="extra content">
+    <a>
+      <i class="user icon"></i>
+      {{intern.balance}}
+    </a>
+  </div>
+
+
+ <div class="extra content">
+    <a>
+      <i class="user icon"></i>
+     {{intern.end_date}}
+    </a>
+  </div>
+
+
+
+
+
+
+</div>
+</div>
   </div>
 
     <!-- jQuery first, then Tether, then Bootstrap JS. -->

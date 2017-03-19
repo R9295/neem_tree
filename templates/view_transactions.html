@@ -5,19 +5,92 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='view_transactions.css') }}" />
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
   </head>
   <body>
-  <div align="center">
-    {% for i in transactions %}
-    Amount  :  {{i['amount']}}<br>Type  :  {{i['type']}}<br>Intern Name  :  {{i['intern_name']}}<br>Date  :  {{i['date']}}<br> Done By  :  {{i['done_by']}}<br><br><br>
-    {% endfor %}
+  <nav class="navbar navbar-toggleable-md navbar-light bg-faded" style="font-family: 'Raleway', sans-serif;
+  background-color: black;">
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" href="#" style="color:red;font-size:1.2vw;">NEEM TREE</a>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/home/unit" style="color:red;font-size:1vw;">Home <span class="sr-only">(current)</span></a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="dropdown" style="background-color: transparent;font-size: 1vw;color:red;">
+  <a class="btn dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 1vw;color:red;">
+    {{user.name}}
+  </a>
+
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+    <a class="dropdown-item" href="#">Settings</a>
+    <a class="dropdown-item" href="/logout">Logout</a>
+  </div>
 </div>
+  </nav>
+
+<br><br><br>>
+
+<section style="font-family: 'Raleway', sans-serif;">
+  <!--for demo wrap-->
+  <h1>Transactions</h1>
+
+  <div class="tbl-header">
+    <table cellpadding="0" cellspacing="0" border="0">
+      <thead>
+        <tr>
+          <th>Amount</th>
+          <th>Type</th>
+          <th>Intern Name</th>
+          <th>Date</th>
+          <th>Done By</th>
+          <th>Reference</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+  
+  <div class="tbl-content">
+    <table cellpadding="0" cellspacing="0" border="0">
+    {% for i in transactions %}
+      <tbody>
+        <tr>
+          <td>{{i.amount}}</td>
+          <td>{{i.type}} </td>
+          <td>{{i.intern_name}}</td>
+          <td>{{i.date}}</td>
+          <td>{{i.done_by}}</td>
+          <td>{{i.reference}}</td>
+        </tr>
+      </tbody>
+       {% endfor %}
+    </table>
+  </div>
+</section>
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
   </body>
+  <script>
+  
+  // '.tbl-content' consumed little space for vertical scrollbar, scrollbar width depend on browser/os/platfrom. Here calculate the scollbar width .
+$(window).on("load resize ", function() {
+  var scrollWidth = $('.tbl-content').width() - $('.tbl-content table').width();
+  $('.tbl-header').css({'padding-right':scrollWidth});
+}).resize();
+
+</script>
 </html>
