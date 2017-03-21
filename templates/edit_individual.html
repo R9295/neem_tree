@@ -1,22 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-  <title>Unit Holder | Home</title>
+  <title>Edit Intern</title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-  
-  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/components/reveal.min.css">
-     <link rel= "stylesheet" href= "{{url_for('static',filename='home_unit.css') }}">
-<script type=></script>
+
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/components/card.min.css">
+
   </head>
   <body>
- <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+   <nav class="navbar navbar-toggleable-md navbar-light bg-faded" style="font-family: 'Raleway', sans-serif;background-color: black;">
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -42,78 +40,18 @@
 </div>
 </nav>
 
-<br><br><br><br><br>
+<br><br>
 
-<div style="position: relative;left: 25%;"> 
+    <h1 align="center" style="font-family: 'Raleway', sans-serif;">Edit {{intern.name}}</h1>
+    <br><br>
 
-<!-- row one -->
-  <div class="row">
-
-
-  <a href="/add/intern">
-    <div class="card">
-  <div class="card-block">
-  <div class="ui move reveal">
-  <div class="visible content">
-    <img src="../static/icons/add_intern.jpg">
-  </div>
-  <div class="hidden content">
-    <h3 align="center">Add Intern</h3>
-  </div>
-</div> 
-  </div>
-</div>
-</a>
-<div class="space"></div>
-
-
-
-<a href="/interns">
-<div class="card">
-  <div class="card-block">
-     <div class="ui move reveal">
-  <div class="visible content">
-     <img src="../static/icons/view_interns.jpg">
-  </div>
-  <div class="hidden content">
-    <h3 align="center">View Interns</h3>
-  </div>
-</div>
-  </div>
-</div>
-</a>
-<div class="space"></div>
-
-
-<a href="/interns/edit">
-<div class="card">
-  <div class="card-block">
-  <div class="ui move reveal">
-  <div class="visible content">
-    <img src="../static/card.jpg">
-  </div>
-  <div class="hidden content">
-   <h3 align="center">Edit Intern</h3>
-  </div>
-</div>
-  </div>
-</div>
-</a>
-<div class="space"></div>
-
-  </div> 
-  <br><br>
-
-  </div> 
-
-  <br><br>
-
-
-  </div>
-</div>
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
-    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
   </body>
+
+  <script type="text/javascript">
+
+</script>
 </html>

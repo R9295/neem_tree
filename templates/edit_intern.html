@@ -5,130 +5,158 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/components/card.min.css">
+
   </head>
   <body>
-    <h1 align="center">Edit Intern</h1>
-    <br><br><br><br>
+   <nav class="navbar navbar-toggleable-md navbar-light bg-faded" style="font-family: 'Raleway', sans-serif;background-color: black;">
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" href="#" style="color:red;font-size:1.2vw;">NEEM TREE</a>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/home/unit" style="color:red;font-size:1vw;">Home <span class="sr-only">(current)</span></a>
+      </li>
+    </ul>
+  </div>
+  
+<div class="dropdown">
+  <a class="btn dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 1vw;color:red;">
+    {{user.name}}
+  </a>
+
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+    <a class="dropdown-item" href="#">Settings</a>
+    <a class="dropdown-item" href="/logout">Logout</a>
+  </div>
+</div>
+</nav>
+
+<br><br>
+
+    <h1 align="center" style="font-family: 'Raleway', sans-serif;">Edit Intern</h1>
+    <br><br>
+
 
     <div class="container">
-    <input type="text" name="" class="form-control" id="person_name" placeholder="Your Name">
-    <input type="text" name="" class="form-control" id="start_date" placeholder="Start Date in DD/MM/YYYY">
-    <input type="text" name="" class="form-control" id="unit_name" placeholder="Unit Name">
-    <input type="text" name="" class="form-control" id="email" placeholder="Email">
-    <input type="text" name="" class="form-control" id="phone_number" placeholder="Phone Number">
-    <input type="text" name="" class="form-control" id="img_url" placeholder="Image URL">
-    <button id="submit">Sumbit</button>
-      
+    <input type="text" class="form-control" name="" placeholder="Search by name" id="search">
+<br><br>
+      <div class="row" id='intern_list' style="padding-right: 15px;">
+          {% for intern in interns %}
+
+<div class="ui card" id="intern">
+
+  <div class="image">
+     <img  src="../static/img/{{intern[5]}}">
+  </div>
+
+  <div class="content">
+    <a class="header" href="/{{intern[6]}}/edit">{{intern[0][0]}}</a>
+    <div class="description">
+      Interns at {{intern[2]}}<br>
+
+      </div>
+  </div>
+  
+
+  <div class="extra content">
+    <a>
+      <i class="user icon"></i>
+      {{intern[1]}}
+    </a>
+  </div>
+
+
+
+
+ <div class="extra content">
+    <a>
+      <i class="user icon"></i>
+      {{intern[4]}}
+    </a>
+  </div>
+
+
+ <div class="extra content">
+    <a>
+      <i class="user icon"></i>
+      {{intern[3]}}  INR
+    </a>
+  </div>
+
+</div>
+    {% endfor %}
+</div>
+   </div>
+</div>
+
+
+
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
-    <script
-        src="https://code.jquery.com/jquery-3.1.1.min.js"
-        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
   </body>
 
   <script type="text/javascript">
 
-   //Submiting Unit Holder
-  $("#submit").on('click', function(){
-    var person_name = $("#person_name").val();
-    var start_date = $("#start_date").val();
-    var unit_name = $("#unit_name").val();
-    var email = $("#email").val();
-    var phone_number = $("#phone_number").val();
-    var img_url = $("#img_url").val();
-    
-    //checking if values are not empty, if not, post!
-    if (person_name.length ===0) {
-      console.log('Person Name is empty');
-    }
-    else if(start_date.length === 0){
-      console.log('Start Date is empty'); 
-    }
+   //Search
 
-    else if(email.length === 0){
-      console.log('Email is empty');
+    $('#search').keyup(function(){
+    var search_term = $(this).val();
 
-    }
-  else if(phone_number.length === 0){
-      console.log('Phone Number is empty');
 
-    }
+    if(search_term != ''){
 
-    else if(unit_name.length === 0){
-      console.log('Unit Name is empty');
-
-    }
-    else if(img_url.length === 0){
-      console.log('Image URL is empty');
-
-    }
-    else{
-      data = JSON.stringify({'name':person_name,'start_date':start_date,'unit_name':unit_name,'email':email,
-        'phone_number':phone_number, 'img': img_url})
-          $.ajax({
+$.ajax({
   type: "POST",
-  url: '/add_intern',
-  contentType:"application/json; charset=utf-8",
-  data: data,
-  success: function(data){
-    console.log(data)
-  },
-  dataType: "json"
-});
-  
+  contentType: "application/json; charset=utf-8",
+  url: "/search",
+  dataType: "json",
+  data: JSON.stringify({'query': search_term}),
+  success: function (data) {
+
+
+   if (data.response.length != 0){
+    console.log();
+    reply = '';
+    for (i = 0; i < data.response.length; i++){
+
+      reply = reply+'<div class="ui card">  <div class="image">  <img src="/static/img/'+data.response[i][1]+'"></img>  <div class="content"> <a href="/'+data.response[i][2]+'/edit"> '  +data.response[i][0]+  '</a>  </div>'
+
+      $("#intern_list").html(reply);
+    }} 
+    if (data.response.length == 0){
+      $("#intern_list").html(
+        '<h3>'+'No results'+'</h3>'
+        )
 
     }
+    
+
+
+
+    }
+
   });
 
-    
+}
 
-   //Submiting Neem Tree Staff
-  $("#neem_submit").on('click', function(){
-    var name = $("#name_neem").val();
-    var password = $("#password_neem").val();
-    var email = $("#email_neem").val();
-    var phone_number = $("#phone_number_neem").val();
-    
-    //checking if values are not empty, if not, post!
-    if (person_name.length ===0) {
-      console.log('Person Name is empty');
-    }
-    else if(password.length === 0){
-      console.log('Password is empty'); 
-    }
+if (search_term == ''){
+  $("#intern_list").html(
+    '<h3>'+'Please refresh the page for the full list again.'+'</h3>'
+    )
 
-    else if(email.length === 0){
-      console.log('Email is empty');
-
-    }
-  else if(phone_number.length === 0){
-      console.log('Phone Number is empty');
-
-    }
-
-    else{
-      data = JSON.stringify({'name':name,'password':password,'email':email,'phone_number':phone_number})
-         
-   $.ajax({
-  type: "POST",
-  url: '/add_staff',
-  contentType:"application/json; charset=utf-8",
-  data: data,
-  success: function(data){
-    console.log(data)
-  },
-  dataType: "json"
+}
 });
-  
 
-    }
-  });
-
-    
 </script>
 </html>
