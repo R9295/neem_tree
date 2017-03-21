@@ -1,0 +1,33 @@
+#1
+
+Add Navbars
+
+
+#2
+
+Response after creating intern, should be displayed to user
+
+
+#3
+
+Fix Search Result display @ search interns
+
+#4
+
+Fix auth with usr = db.active.find_one({'key' : key})
+
+#5 
+
+before broswer or template closes, send logout signal to delete from db.active
+
+#6 
+
+Unit holder shouldnt be able to get results from other units.
+
+#7
+
+Fix Interns not showing up on intern page for staff
+
+#8 
+
+Input Validation

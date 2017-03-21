@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <title>Money Out</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  </head>
+  <body>
+    
+
+    <h1 align="center">Money Out</h1>
+    <div class="container">
+    <input type="text" name="" class="form-control" id="person_name_out" placeholder="Intern Name">
+    <input type="text" name="" class="form-control" id="amount_out" placeholder="Amount">
+    <input type="text" name="" class="form-control" id="reference_out" placeholder="Reference">
+     <div id="callback_out" style="color:red;"></div>
+     <div id="results"></div>
+
+    <button id="submit_out">Sumbit</button>
+    </div>
+   
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+
+     <script type="text/javascript">
+
+   //Money Out
+  $("#submit_out").on('click', function(){
+    var person_name = $("#person_name_out").val();
+   
+    var amount = $("#amount_out").val();
+    var reference = $("#reference_out").val();
+    
+    //checking if values are not empty, if not, post!
+    if (person_name.length ===0) {
+      console.log('Person Name is empty');
+    }
+  
+    else if(amount.length === 0){
+      console.log('Amount is empty');
+
+    }
+  else if(reference.length === 0){
+      console.log('Reference is empty');
+
+    }
+
+    else{
+      data = JSON.stringify({'intern_name':person_name,'amount':amount,'reference':reference})
+          $.ajax({
+  type: "POST",
+  url: '/money_out',
+  contentType:"application/json; charset=utf-8",
+  data: data,
+  success: function(data){
+    $("#callback_out").text(data.response)
+  },
+  dataType: "json"
+});
+  
+
+    }
+  });
+
+
+//Search
+
+
+    $('#person_name_out').keyup(function(){
+    var search_term = $(this).val();
+
+    if(search_term != ''){
+
+$.ajax({
+  type: "POST",
+  contentType: "application/json; charset=utf-8",
+  url: "/search",
+  dataType: "json",
+  data: JSON.stringify({'query': search_term}),
+  success: function (data) {
+
+
+   if (data.response.length != 0){
+    
+    reply = '';
+    for (i = 0; i < data.response.length; i++){
+      var name = data.response[i][0];
+      reply = reply+'<a href="#"  onclick="change_val(this.text)">'+data.response[i][0]+'</a>'+'<br>'
+
+      $("#results").html(
+        reply
+        )
+    }} 
+    else{
+      $("#results").html(
+        '<h3>'+'No results'+'</h3>'
+        )
+
+    }
+    
+
+
+
+    }
+
+  });
+
+}
+});
+
+  function change_val(value){
+  data = value;
+  $("#person_name_out").val(data)
+  }
+
+</script>
+  </body>
+</html>

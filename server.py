@@ -119,8 +119,10 @@ def add():
 def home_staff():
 	key = request.cookies.get('key')
 	error = None
-	if db.active.find({'key' : key}).count() != 0:
+	usr = db.active.find_one({'key' : key})
+	if db.active.find({'key' : key}).count() != 0 and usr['type'] == 'staff' :
 		user = db.active.find_one({'key' : key})
+		user = db.staff.find_one({'email':user['email']})
 		return render_template('home_staff.html',user=user)
 	else:
 		return redirect('/login')
@@ -130,12 +132,16 @@ def home_staff():
 def home_unit():
 	key = request.cookies.get('key')
 	error = None
-	if db.active.find({'key' : key}).count() != 0:
+	usr = db.active.find_one({'key' : key})
+	if db.active.find({'key' : key}).count() != 0 and usr['type'] == 'unit':
 		user = db.active.find_one({'key' : key})
 		user = db.unit_holder.find_one({'email':user['email']})
 		return render_template('home_unit.html',user=user)
-	else:
-		return redirect('/login')
+
+	if db.active.find({'key' : key}).count() != 0 and usr['type'] == 'staff' :
+		user = db.active.find_one({'key' : key})
+		user = db.staff.find_one({'email':user['email']})
+		return redirect('/home/staff')
 
 
 
@@ -190,13 +196,20 @@ def add_unit_holder():
 def add_an_intern():
 	key = request.cookies.get('key')
 	error = None
+	usr = db.active.find_one({'key' : key})
+
+
 	if db.active.find({'key' : key}).count() != 0:
+
 		user = db.active.find_one({'key' : key})
+		if db.staff.find({'email':user['email']}).count() != 0:
+			return redirect('/add/intern/staff')
+		
+		elif db.unit_holder.find({'email':user['email']}).count() != 0 and usr['type'] == 'unit':
+			user = db.unit_holder.find_one({'email':user['email']})
 			
 
-
-		if request.method == 'POST':
-
+			if request.method == 'POST':
 				email = request.cookies.get('email')
 				user = db.unit_holder.find_one({'email'  : email })
 				filename = photos.save(request.files['img'])
@@ -210,8 +223,7 @@ def add_an_intern():
 				"balance": 0,
 				"img": filename
 				}
-
-				
+					
 
 				try:
 					db.intern.insert_one(data)
@@ -224,12 +236,64 @@ def add_an_intern():
 					response['response'] = "failure"
 					response = json.dumps(response)
 					return response	
-			
 
-
-		return render_template('add_intern.html',user=user)
+			return render_template('add_intern.html',user=user)
 	else:
 		return redirect('/login')
+
+
+
+@app.route('/add/intern/staff', methods=['GET','POST'])
+def add_intern_staff():
+	key = request.cookies.get('key')
+	error = None
+	user_type = None
+	usr = db.active.find_one({'key' : key})
+	if db.active.find({'key' : key}).count() != 0 and usr['type'] == 'staff':
+		user = db.active.find_one({'key' : key})
+		if db.staff.find({'email':user['email']}).count() != 0:
+			user = db.staff.find_one({'email':user['email']})
+
+		elif db.unit_holder.find({'email':user['email']}).count() != 0:
+			return redirect('/add/intern')
+
+		else:
+			return redirect('/login')
+
+		if request.method == 'POST':
+			email = request.cookies.get('email')
+			user = db.staff.find_one({'email'  : email })
+			filename = photos.save(request.files['img'])
+			data = {
+			"name":request.form['name'],
+			"unit_name":request.form['unit_name'],
+			"email":request.form['email'],
+			"phone_number":request.form['phone_number'],
+			"start_date":request.form['start_date'],
+			"end_date":None,
+			"balance": 0,
+			"img": filename
+			}
+			
+			try:
+				db.intern.insert_one(data)
+				response = {}
+				response['response'] = 'success'
+				response = json.dumps(response)
+				return response					
+			except:
+				response = {}
+				response['response'] = "failure"
+				response = json.dumps(response)
+				return response	
+
+
+
+		return render_template('add_intern_staff.html',user=user)
+	else:
+		return redirect('/login')
+
+
 
 #Edit Intern Page
 @app.route('/edit/intern/<id>')
@@ -242,23 +306,32 @@ def edit_an_intern(id):
 	else:
 		return redirect('/login')
 
+
 #Intern List 
 @app.route('/interns')
-def intern_list():
+def intern_list_staff():
 	key = request.cookies.get('key')
 	error = None
 	if db.active.find({'key' : key}).count() != 0:
+
 		user = db.active.find_one({'key' : key})
-		interns = db.intern.find()
-		if user['type'] == 'unit':
-			unit = db.unit_holder.find_one({'email'  : request.cookies.get('email') })
-			interns = db.intern.find()
-			user = db.active.find_one({'key' : key})
+		if db.unit_holder.find({'email': user['email']}).count() != 0:
 			user = db.unit_holder.find_one({'email':user['email']})
+			interns = []
+			for i in db.intern.find({'unit_name'  : user['unit_name']}):
+				interns.append([[i['name']],i['email'],i['unit_name'],i['balance'],i['phone_number'],i['img']])
+		else:
+			user = db.staff.find_one({'email':user['email']})
+			interns = []
+			for i in db.intern.find():
+				interns.append([[i['name']],i['email'],i['unit_name'],i['balance'],i['phone_number'],i['img']])
+
+
 			 
 		return render_template('interns.html',user=user,interns=interns)
 	else:
 		return redirect('/login')
+
 
 #Individual Intern
 @app.route('/<id>')
@@ -292,7 +365,8 @@ def remove_intern():
 def view_transactions():
 	key = request.cookies.get('key')
 	error = None
-	if db.active.find({'key' : key}).count() != 0:
+	usr = db.active.find_one({'key' : key})
+	if db.active.find({'key' : key}).count() != 0 and usr['type'] == 'staff':
 		user = db.active.find_one({'key' : key})
 		transactions = db.transactions.find().sort([('_id', -1)])
 		return render_template('view_transactions.html',user=user,transactions=transactions)
@@ -306,21 +380,49 @@ def view_transactions():
 def search():
 	results = []
 	query = request.json['query']
-	search_results = db.intern.find({'name': {'$regex' : query}})
-	if search_results != None:
-		for i in search_results:
-			results.append([i['name'],i['img'],str(i['_id']), i['email'], i['unit_name']])
-		response = {}
-		response['response'] = results
-		response = json.dumps(response)
-		print response
-		return response
-	else:
-		response = {}
-		response['response'] = "No Interns Found "
-		response = json.dumps(response)
-		return response	
+	key = request.cookies.get('key')
+	error = None
+	usr = db.active.find_one({'key'  :  key})
+	if db.active.find({'key' : key}).count() != 0 and usr['type'] == 'staff':
+		search_results = db.intern.find({'name': {'$regex' : query}})
+		if search_results != None:
+			for i in search_results:
+				results.append([i['name'],i['img'],str(i['_id']), i['email'], i['unit_name']])
+			response = {}
+			response['response'] = results
+			response = json.dumps(response)
+			print response
+			return response
+		else:
+			response = {}
+			response['response'] = "No Interns Found "
+			response = json.dumps(response)
+			return response
+
+	if db.active.find({'key': key }).count() != 0 and usr['type'] == 'unit':
+		user = db.unit_holder.find_one({'email'  :  usr['email']})
+		search_results = db.intern.find({'name': {'$regex' : query}, 'unit_name':user['unit_name']})
+		if search_results != None:
+			for i in search_results:
+				results.append([i['name'],i['img'],str(i['_id']), i['email'], i['unit_name']])
+			response = {}
+			response['response'] = results
+			response = json.dumps(response)
+			print response
+			return response
+		else:
+			response = {}
+			response['response'] = "No Interns Found "
+			response = json.dumps(response)
+			return response	
 			
+
+
+	else:
+		return redirect('/login')
+
+
+
 
 
 
@@ -330,21 +432,37 @@ def search():
 
 
 #Commit Transaction
-@app.route("/transaction")
-def transaction():
+@app.route("/transaction/money_in")
+def transaction_in():
 	key = request.cookies.get('key')
 	error = None
-	if db.active.find({'key' : key}).count() != 0:
+	usr = db.active.find_one({'key' : key})
+	if db.active.find({'key' : key}).count() != 0 and usr['type'] == 'staff':
 		user = db.active.find_one({'key' : key})
-		return render_template('transaction.html',user=user)
+		return render_template('money_in.html',user=user)
 	else:
 		return redirect('/login')
+
+
+
+@app.route("/transaction/money_out")
+def transaction_out():
+	key = request.cookies.get('key')
+	error = None
+	usr = db.active.find_one({'key' : key})
+	if db.active.find({'key' : key}).count() != 0 and usr['type'] == 'staff':
+		user = db.active.find_one({'key' : key})
+		return render_template('money_out.html',user=user)
+	else:
+		return redirect('/login')
+
+
 
 #Transaction Money In API
 @app.route('/money_in', methods=['POST'])
 def money_in():
 	email = request.cookies.get('email')
-	user = db.unit_holder.find_one({'email'  :  email})
+	user = db.staff.find_one({'email'  :  email})
 	data={
 	"date":strftime("%a, %d %b %Y", gmtime()),
 	"intern_name":request.json['intern_name'],

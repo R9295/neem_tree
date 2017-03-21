@@ -52,6 +52,7 @@
 <br><br><br>
 
 <div class="container ">
+  <script type="text/javascript"> console.log('{{interns}}')</script>
   <input type="text" class="form-control" name="" placeholder="Search by name" id="search">
 
 
@@ -59,18 +60,19 @@
 
   <br><br>
   <div class="row" id='intern_list' style="padding-right: 15px;">
+
     {% for intern in interns %}
-  
+
 <div class="ui card" id="intern">
 
   <div class="image">
-     <img  src="../static/img/{{intern.img}}">
+     <img  src="../static/img/{{intern[5]}}">
   </div>
 
   <div class="content">
-    <a class="header" href="/{{intern._id}}">{{intern.name}}</a>
+    <a class="header" href="/{{intern._id}}">{{intern[0][0]}}</a>
     <div class="description">
-      Interns at {{intern.unit_name}}<br>
+      Interns at {{intern[2]}}<br>
 
       </div>
   </div>
@@ -79,7 +81,7 @@
   <div class="extra content">
     <a>
       <i class="user icon"></i>
-      {{intern.email}}
+      {{intern[1]}}
     </a>
   </div>
 
@@ -89,7 +91,7 @@
  <div class="extra content">
     <a>
       <i class="user icon"></i>
-      {{intern.phone_number}}
+      {{intern[4]}}
     </a>
   </div>
 
@@ -97,7 +99,7 @@
  <div class="extra content">
     <a>
       <i class="user icon"></i>
-      {{intern.balance}}
+      {{intern[3]}}
     </a>
   </div>
 
@@ -111,11 +113,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
   </body>
+  <script>
+    
 
+  </script>
   <script>
   //Search
 
     $('#search').keyup(function(){
+     console.log(
+
+      '{{interns}}')
     var search_term = $(this).val();
 
     if(search_term != ''){
@@ -130,10 +138,10 @@ $.ajax({
 
 
    if (data.response.length != 0){
-    reply = '<br>';
+    reply = '';
     for (i = 0; i < data.response.length; i++){
 
-      reply = reply+'<a href="'+data.response[i][2]+'">'+data.response[i][0]+'</a>'
+      reply = reply+'<ul>  <li>  <div class="ui card">  <div class="image">  <img src="/static/img/'+data.response[i][1]+'"></img>  <div class="content"> <a href="/'+data.response[i][2]+'"> '  +data.response[i][0]+  '</a>  </div>  </li>  </ul>'
 
       //console.log(data.response);
       //console.log(data.response[i][0],data.response[i][1],data.response[i][2],data.response[i][3],data.response[i][4]);
