@@ -5,20 +5,54 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+        <link rel= "stylesheet" href= "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/components/card.min.css">
+
   </head>
   <body>
-    
+    <nav class="navbar navbar-toggleable-md navbar-light bg-faded" style="background-color: black;font-family: 'Raleway', sans-serif;">
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" href="#" style="color:red;font-size:1.2vw;">NEEM TREE</a>
 
-    <h1 align="center">Money Out</h1>
-    <div class="container">
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/home/unit" style="color:red;font-size:1vw;">Home <span class="sr-only">(current)</span></a>
+      </li>
+    </ul>
+  </div>
+  
+<div class="dropdown">
+  <a class="btn dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 1vw;color:red;">
+    {{user.name}}
+  </a>
+
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+    <a class="dropdown-item" href="#">Settings</a>
+    <a class="dropdown-item" href="/logout">Logout</a>
+  </div>
+</div>
+</nav>
+
+<br><br><br><br><br>
+
+
+    <h1 align="center" style="font-family: 'Raleway', sans-serif;">Money Out</h1>
+    <div class="container" style="font-family: 'Raleway', sans-serif;">
     <input type="text" name="" class="form-control" id="person_name_out" placeholder="Intern Name">
+    <br><br>
+     <div id="results"></div>
+     <br><br>
     <input type="text" name="" class="form-control" id="amount_out" placeholder="Amount">
     <input type="text" name="" class="form-control" id="reference_out" placeholder="Reference">
      <div id="callback_out" style="color:red;"></div>
-     <div id="results"></div>
+    
 
     <button id="submit_out">Sumbit</button>
     </div>
@@ -30,16 +64,22 @@
 
 
      <script type="text/javascript">
-
-   //Money Out
-  $("#submit_out").on('click', function(){
-    var person_name = $("#person_name_out").val();
+ var person_name = $("#person_name_out").val();
    
     var amount = $("#amount_out").val();
     var reference = $("#reference_out").val();
     
+   //Money Out
+  $("#submit_out").on('click', function(){
+     var x;
+    if (confirm("Are you sure you want to remove  "+$("#amount_out").val()+  "   from  "+$("#person_name_out").val()+"?" ) ==true) {
+      var person_name = $("#person_name_out").val();
+   
+    var amount = $("#amount_out").val();
+    var reference = $("#reference_out").val();
+   
     //checking if values are not empty, if not, post!
-    if (person_name.length ===0) {
+    if (person_name.length === 0) {
       console.log('Person Name is empty');
     }
   
@@ -67,8 +107,12 @@
   
 
     }
-  });
-
+  }
+   else {
+        x = "You pressed Cancel!";
+    }
+ 
+});
 
 //Search
 
@@ -92,7 +136,7 @@ $.ajax({
     reply = '';
     for (i = 0; i < data.response.length; i++){
       var name = data.response[i][0];
-      reply = reply+'<a href="#"  onclick="change_val(this.text)">'+data.response[i][0]+'</a>'+'<br>'
+      reply = reply+'<div class="ui card">  <div class="image">  <img src="/static/img/'+data.response[i][1]+'"></img>  <div class="content"> <a href="#"onclick="change_val(this.text)"> '  +data.response[i][0]+  '</a>  </div>'
 
       $("#results").html(
         reply

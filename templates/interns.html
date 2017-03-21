@@ -52,7 +52,6 @@
 <br><br><br>
 
 <div class="container ">
-  <script type="text/javascript"> console.log('{{interns}}')</script>
   <input type="text" class="form-control" name="" placeholder="Search by name" id="search">
 
 
@@ -70,7 +69,7 @@
   </div>
 
   <div class="content">
-    <a class="header" href="/{{intern._id}}">{{intern[0][0]}}</a>
+    <a class="header" href="/{{intern[6]}}">{{intern[0][0]}}</a>
     <div class="description">
       Interns at {{intern[2]}}<br>
 
@@ -99,7 +98,7 @@
  <div class="extra content">
     <a>
       <i class="user icon"></i>
-      {{intern[3]}}
+      {{intern[3]}}  INR
     </a>
   </div>
 
@@ -121,9 +120,6 @@
   //Search
 
     $('#search').keyup(function(){
-     console.log(
-
-      '{{interns}}')
     var search_term = $(this).val();
 
     if(search_term != ''){
@@ -143,8 +139,6 @@ $.ajax({
 
       reply = reply+'<ul>  <li>  <div class="ui card">  <div class="image">  <img src="/static/img/'+data.response[i][1]+'"></img>  <div class="content"> <a href="/'+data.response[i][2]+'"> '  +data.response[i][0]+  '</a>  </div>  </li>  </ul>'
 
-      //console.log(data.response);
-      //console.log(data.response[i][0],data.response[i][1],data.response[i][2],data.response[i][3],data.response[i][4]);
       $("#intern_list").html(reply);
     }} 
     if (data.response.length == 0){

@@ -195,7 +195,7 @@ def add_unit_holder():
 @app.route('/add/intern', methods=['GET','POST'])
 def add_an_intern():
 	key = request.cookies.get('key')
-	error = None
+	error = ''
 	usr = db.active.find_one({'key' : key})
 
 
@@ -210,34 +210,42 @@ def add_an_intern():
 			
 
 			if request.method == 'POST':
-				email = request.cookies.get('email')
-				user = db.unit_holder.find_one({'email'  : email })
-				filename = photos.save(request.files['img'])
-				data = {
-				"name":request.form['name'],
-				"unit_name":user['unit_name'],
-				"email":request.form['email'],
-				"phone_number":request.form['phone_number'],
-				"start_date":request.form['start_date'],
-				"end_date":None,
-				"balance": 0,
-				"img": filename
-				}
-					
 
-				try:
-					db.intern.insert_one(data)
-					response = {}
-					response['response'] = 'success'
-					response = json.dumps(response)
-					return response					
-				except:
-					response = {}
-					response['response'] = "failure"
-					response = json.dumps(response)
-					return response	
+				if len(request.form['email']) == 0:
+							error = 'Invalid email'
 
-			return render_template('add_intern.html',user=user)
+				if len(request.form['name'])  == 0:
+							error = 'Invalid Name'
+
+				
+				if request.form['phone_number'].isdigit() != True or len(str(request.form['phone_number'])) != 10 :
+            				error = 'Invalid phone number'
+
+
+
+            	if error == None:
+					email = request.cookies.get('email')
+					user = db.unit_holder.find_one({'email'  : email })
+					filename = photos.save(request.files['img'])
+					data = {
+					"name":request.form['name'],
+					"unit_name":user['unit_name'],
+					"email":request.form['email'],
+					"phone_number":request.form['phone_number'],
+					"start_date":request.form['start_date'],
+					"end_date":None,
+					"balance": 0,
+					"img": filename
+					}
+						
+
+					try:
+						db.intern.insert_one(data)
+						return redirect('/interns')					
+					except:
+						return "Couldn't create intern. Contact admin"
+
+		return render_template('add_intern.html',user=user,error=error)
 	else:
 		return redirect('/login')
 
@@ -246,7 +254,7 @@ def add_an_intern():
 @app.route('/add/intern/staff', methods=['GET','POST'])
 def add_intern_staff():
 	key = request.cookies.get('key')
-	error = None
+	error = ''
 	user_type = None
 	usr = db.active.find_one({'key' : key})
 	if db.active.find({'key' : key}).count() != 0 and usr['type'] == 'staff':
@@ -261,35 +269,39 @@ def add_intern_staff():
 			return redirect('/login')
 
 		if request.method == 'POST':
-			email = request.cookies.get('email')
-			user = db.staff.find_one({'email'  : email })
-			filename = photos.save(request.files['img'])
-			data = {
-			"name":request.form['name'],
-			"unit_name":request.form['unit_name'],
-			"email":request.form['email'],
-			"phone_number":request.form['phone_number'],
-			"start_date":request.form['start_date'],
-			"end_date":None,
-			"balance": 0,
-			"img": filename
-			}
-			
-			try:
-				db.intern.insert_one(data)
-				response = {}
-				response['response'] = 'success'
-				response = json.dumps(response)
-				return response					
-			except:
-				response = {}
-				response['response'] = "failure"
-				response = json.dumps(response)
-				return response	
+			if len(request.form['email']) == 0:
+						error = 'Invalid email'
+
+			if len(request.form['name'])  == 0:
+						error = 'Invalid Name'
+
+				
+			if request.form['phone_number'].isdigit() != True or len(str(request.form['phone_number'])) != 10 :
+            			error = 'Invalid phone number'
+
+			if error == '':
+				email = request.cookies.get('email')
+				user = db.staff.find_one({'email'  : email })
+				filename = photos.save(request.files['img'])
+				data = {
+				"name":request.form['name'],
+				"unit_name":request.form['unit_name'],
+				"email":request.form['email'],
+				"phone_number":request.form['phone_number'],
+				"start_date":request.form['start_date'],
+				"end_date":None,
+				"balance": 0,
+				"img": filename
+				}
+				
+				try:
+					db.intern.insert_one(data)
+					return redirect('/interns')			
+				except:
+					return "Couldn't create intern. Contact admin"
 
 
-
-		return render_template('add_intern_staff.html',user=user)
+		return render_template('add_intern_staff.html',user=user,error=error)
 	else:
 		return redirect('/login')
 
@@ -319,12 +331,12 @@ def intern_list_staff():
 			user = db.unit_holder.find_one({'email':user['email']})
 			interns = []
 			for i in db.intern.find({'unit_name'  : user['unit_name']}):
-				interns.append([[i['name']],i['email'],i['unit_name'],i['balance'],i['phone_number'],i['img']])
+				interns.append([[i['name']],i['email'],i['unit_name'],i['balance'],i['phone_number'],i['img'],i['_id']])
 		else:
 			user = db.staff.find_one({'email':user['email']})
 			interns = []
 			for i in db.intern.find():
-				interns.append([[i['name']],i['email'],i['unit_name'],i['balance'],i['phone_number'],i['img']])
+				interns.append([[i['name']],i['email'],i['unit_name'],i['balance'],i['phone_number'],i['img'],i['_id']])
 
 
 			 
@@ -368,6 +380,7 @@ def view_transactions():
 	usr = db.active.find_one({'key' : key})
 	if db.active.find({'key' : key}).count() != 0 and usr['type'] == 'staff':
 		user = db.active.find_one({'key' : key})
+		user = db.staff.find_one({'email'  : user['email']})
 		transactions = db.transactions.find().sort([('_id', -1)])
 		return render_template('view_transactions.html',user=user,transactions=transactions)
 	else:
@@ -439,6 +452,7 @@ def transaction_in():
 	usr = db.active.find_one({'key' : key})
 	if db.active.find({'key' : key}).count() != 0 and usr['type'] == 'staff':
 		user = db.active.find_one({'key' : key})
+		user = db.staff.find_one({'email'  : user['email']})
 		return render_template('money_in.html',user=user)
 	else:
 		return redirect('/login')
@@ -452,6 +466,7 @@ def transaction_out():
 	usr = db.active.find_one({'key' : key})
 	if db.active.find({'key' : key}).count() != 0 and usr['type'] == 'staff':
 		user = db.active.find_one({'key' : key})
+		user = db.staff.find_one({'email'  : user['email']})
 		return render_template('money_out.html',user=user)
 	else:
 		return redirect('/login')
@@ -471,9 +486,11 @@ def money_in():
 	"type": "money_in",
 	"done_by": user['name']
 	}
+	print data['intern_name']
 	
 	intern = db.intern.find({'name'  :  data['intern_name']}).count()
-	if intern == 1:
+	print intern
+	if intern != 0:
 		intern = db.intern.find_one({'name'  :  data['intern_name']})
 		intern['balance'] =intern['balance']+data['amount']
 		db.intern.save(intern)
