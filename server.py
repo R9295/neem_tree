@@ -12,12 +12,13 @@ from time import gmtime,strftime
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from datetime import *
 import datetime
-
+from info_data import *
 
 
 #Connecting to DB
-client = MongoClient()
-db = client.neemtree
+
+client = MongoClient(uri)
+db = client.neem_tree
 
 
 
@@ -46,7 +47,7 @@ def home():
 @app.route('/login',methods=['GET','POST'])
 def login():
 	user = 0
-	unit = 9
+	unit = 0
 	if request.method == 'POST':
 		#Verify login form data
 
@@ -84,7 +85,7 @@ def login():
 
 
         elif unit == 1:
-			print 'xd'
+			
 			user = db.unit_holder.find_one({'email': request.json['email']})
 			if ph.verify(user['password'],request.json['password']) == True:
 
@@ -210,20 +211,17 @@ def add_an_intern():
 			
 
 			if request.method == 'POST':
-
 				if len(request.form['email']) == 0:
-							error = 'Invalid email'
+					error = 'Invalid email'
 
 				if len(request.form['name'])  == 0:
-							error = 'Invalid Name'
+					error = 'Invalid Name'
 
 				
 				if request.form['phone_number'].isdigit() != True or len(str(request.form['phone_number'])) != 10 :
-            				error = 'Invalid phone number'
+					error = 'Invalid phone number'
 
-
-
-            	if error == None:
+				if error == '':
 					email = request.cookies.get('email')
 					user = db.unit_holder.find_one({'email'  : email })
 					filename = photos.save(request.files['img'])
@@ -235,13 +233,13 @@ def add_an_intern():
 					"start_date":request.form['start_date'],
 					"end_date":None,
 					"balance": 0,
-					"img": filename
+					"img": filename,
+					"scheme":[]
 					}
-						
-
+					
 					try:
 						db.intern.insert_one(data)
-						return redirect('/interns')					
+						return redirect('/interns')			
 					except:
 						return "Couldn't create intern. Contact admin"
 
@@ -291,7 +289,8 @@ def add_intern_staff():
 				"start_date":request.form['start_date'],
 				"end_date":None,
 				"balance": 0,
-				"img": filename
+				"img": filename,
+				"scheme":[]
 				}
 				
 				try:
@@ -306,18 +305,73 @@ def add_intern_staff():
 		return redirect('/login')
 
 
-
-#Edit Intern Page
-@app.route('/edit/intern/<id>')
-def edit_an_intern(id):
+@app.route('/add_scheme/<id>', methods=['GET','POST'])
+def add_scheme(id):
 	key = request.cookies.get('key')
+	email = request.cookies.get('email')
 	error = None
+
 	if db.active.find({'key' : key}).count() != 0:
 		user = db.active.find_one({'key' : key})
-		return render_template('edit_intern.html',user=user)
-	else:
-		return redirect('/login')
+		if db.unit_holder.find({'email': user['email']}).count() != 0:
+			return redirect('/home/unit')
+		else:
+			user = db.intern.find_one({'_id': ObjectId(id)})
+			active_user = db.staff.find_one({'email':email})
 
+		if request.method == 'POST':
+
+
+			if request.form.get('snack'):
+				data = {
+				'type' : 'snack',
+				'start_date' : request.form['start_date'],
+				'end_date' : request.form['end_date']
+				}
+				user['scheme'].append(data)
+			else:
+				snack = False
+
+
+
+			if request.form.get('breakfast'):
+				data = {
+				'type' : 'breakfast',
+				'start_date' : request.form['start_date'],
+				'end_date' : request.form['end_date']
+				}
+				user['scheme'].append(data)
+			else:
+				breakfast = False
+
+
+			if request.form.get('lunch'):
+				data = {
+				'type' : 'lunch',
+				'start_date' : request.form['start_date'],
+				'end_date' : request.form['end_date']
+				}
+				user['scheme'].append(data)
+			else:
+				lunch = False
+
+			if request.form.get('dinner'):
+				data = {
+				'type' : 'dinner',
+				'start_date' : request.form['start_date'],
+				'end_date' : request.form['end_date']
+				}
+				user['scheme'].append(data)
+			else:
+				dinner = False
+			db.intern.save(user)
+			return redirect('/%s'%(id))
+
+
+
+
+			
+		return render_template('add_scheme.html', active_user=active_user,user=user )
 
 #Intern List 
 @app.route('/interns')
@@ -361,15 +415,100 @@ def individual_intern(id):
 
 
 #Edit Intern API
-@app.route("/edit_intern", methods=['POST'])
+@app.route("/interns/edit", methods=['GET'])
 def edit_intern():
-	pass
+	key = request.cookies.get('key')
+	error = None
+	if db.active.find({'key'  :  key}).count() != 0:
+		user = db.active.find_one({'key'  :  key})
+		type = request.cookies.get('type')
+		if type == 'staff':
+			user = db.staff.find_one({'email':user['email']})
+			interns = []
+			for i in db.intern.find():
+				interns.append([[i['name']],i['email'],i['unit_name'],i['balance'],i['phone_number'],i['img'],i['_id']])
+
+		if type == 'unit':
+			user = db.unit_holder.find_one({'email':user['email']})
+			interns = []
+			for i in db.intern.find({'unit_name'  : user['unit_name']}):
+				interns.append([[i['name']],i['email'],i['unit_name'],i['balance'],i['phone_number'],i['img'],i['_id']])
+		return render_template('edit_intern.html', user=user,interns=interns)
 
 
 #Remove Intern API
-@app.route("/remove_intern", methods=['POST'])
-def remove_intern():
-	pass
+@app.route("/<id>/edit", methods=['GET','POST'])
+def commit_edit_intern(id):
+	key = request.cookies.get('key')
+	error = None
+	if db.active.find({'key'  :  key}).count() != 0:
+		user = db.active.find_one({'key'  :  key})
+		type = request.cookies.get('type')
+		#Checking if user has right to edit intern
+		if type == 'staff':
+			user = db.staff.find_one({'email'  :  user['email']})
+			intern = db.intern.find_one({'_id' : ObjectId(id)})
+		if type == 'unit':
+			user = db.unit_holder.find_one({'email'  :  user['email']})
+			intern = db.intern.find_one({'_id' : ObjectId(id)})
+			if user['unit_name'] != intern['unit_name']:
+				return redirect('/home/unit')
+
+		if request.method == 'POST':
+			name = None
+			start_date = None
+			end_date = None
+			email = None
+			phone_number = None
+			try:
+				name = request.json['name']
+			except KeyError:
+				pass
+				
+			try:
+				start_date = request.json['start_date']
+			except KeyError:
+				pass
+				
+			try:
+				end_date = request.json['end_date']
+			except KeyError:
+				pass
+				
+			try:
+				email = request.json['email']
+			except KeyError:
+				pass
+				
+			try:
+				phone_number = request.json['phone_number']
+			except KeyError:
+				pass
+			
+			updates = {}
+			user = db.intern.find_one({'_id'  :ObjectId(id)})
+			if name != None:
+				user['name'] = name
+			if start_date != None:
+				user['start_date'] = start_date
+			if end_date != None:
+				user['end_date'] = end_date
+			if email != None:
+				user['email'] = email
+			if phone_number != None:
+				user['phone_number'] = phone_number
+			db.intern.save(user)
+			print 'done'
+			return jsonify({'response'  : 'success'})
+
+
+
+		return render_template('edit_individual.html',user=user,intern=intern)
+	
+
+	else:
+		return redirect('/login')
+		
 
 
 #View Transactions
@@ -385,6 +524,28 @@ def view_transactions():
 		return render_template('view_transactions.html',user=user,transactions=transactions)
 	else:
 		return redirect('/login')
+
+
+
+#Search Transactions.
+@app.route('/search/transactions', methods=['POST','GET'])
+def search_transaction():
+	query = request.json['query']
+	results = []
+	key = request.cookies.get('key')
+	error = None
+	usr = db.active.find_one({'key' : key})
+	if db.active.find({'key' : key}).count() != 0 and usr['type'] == 'staff':
+		transactions = db.transactions.find({'intern_name' :{'$regex' : query} }).sort([('_id', -1)])
+		for i in transactions:
+			results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference']])
+		response = {}
+		response['response'] = results
+		response = json.dumps(response)
+		return response
+	else:
+		return redirect('/login')
+
 
 
 
@@ -404,7 +565,6 @@ def search():
 			response = {}
 			response['response'] = results
 			response = json.dumps(response)
-			print response
 			return response
 		else:
 			response = {}
@@ -421,7 +581,6 @@ def search():
 			response = {}
 			response['response'] = results
 			response = json.dumps(response)
-			print response
 			return response
 		else:
 			response = {}

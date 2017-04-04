@@ -1,13 +1,7 @@
-#
+Fix user name not appearing in navbar on intern page(staff)
 
-Style Login,Sign up and Transactions
+Fix Money-in and Money Out results not being in a row
 
-#
+Include sending email to min if more than 2k is transferred by money in or money out.
 
- add Images to Transaction search queries(cards)
-
- #
-
- Add Navbar to Money in and Money out	
-
- #Make transaction URLs accessible only by staff
+Fix date storage in schemes.

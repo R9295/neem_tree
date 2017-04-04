@@ -43,7 +43,31 @@
 <br><br>
 
     <h1 align="center" style="font-family: 'Raleway', sans-serif;">Edit {{intern.name}}</h1>
+    <h3 align="center" style="font-family: 'Raleway', sans-serif;">Enter data only in the ones you want to change, leave the rest empty.</h3>
     <br><br>
+
+    <div class="container" style="font-family: 'Raleway', sans-serif">
+
+    <h5>The current value is {{intern['name']}}</h5>
+    <input type="text"  class="form-control" id="name"          placeholder="Name" class="form-control"><br><br>
+      
+    <h5>The current value is {{intern['start_date']}}</h5>
+    <input type="text"  class="form-control" id="start_date"   placeholder="Start Date in DD/MM/YYYY" class="form-control"><br><br>
+
+    <h5>The current value is {{intern['end_date']}}</h5>
+    <input type="text"  class="form-control" id="end_date"        placeholder="End Date" class="form-control"><br><br>
+
+    <h5>The current value is {{intern['email']}}</h5>
+    <input type="text"  class="form-control" id="email"        placeholder="Email" class="form-control"><br><br>
+
+
+
+    <h5>The current value is {{intern['phone_number']}}</h5>
+    <input type="text"  class="form-control" id="phone_number" placeholder="Phone Number" class="form-control"><br><br>
+
+
+    <h3 style="color:red;">{{error}}</h3>
+    <button id="submit" class="btn btn-md">Sumbit</button>
 
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
@@ -51,7 +75,59 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
   </body>
 
-  <script type="text/javascript">
+  <script>
+  $("#submit").on('click', function(){
+  var name = $("#name").val()
+  var start_date = $("#start_date").val()
+  var end_date = $("#end_date").val()
+  var email = $("#email").val()
+  var phone_number = $("#phone_number").val()
+  console.log(name);
+  data = '';
+  var data = {};
+  
+  if (name != 0){
+    data["name"] = name
+    
+  }
+  if (start_date != 0){
+    data["start_date"] = start_date
+   
+  }
+  if (end_date != 0){
+    data["end_date"] = end_date
+    
+  }
+  if (email != 0){
+    data["email"] = email
+    
+  }
+  if (phone_number != 0){
+    data["phone_number"] = phone_number
 
+  }
+
+
+  $.ajax({
+  type: "POST",
+  contentType: "application/json; charset=utf-8",
+  url: "/{{intern['_id']}}/edit",
+  dataType: "json",
+  data: JSON.stringify(data),
+  success: function (data) {
+
+
+   if (data.response.length != 0){
+    window.location = "/{{intern['_id']}}";
+  }
+
+}
+});
+
+  })
+
+
+  
+ 
 </script>
 </html>

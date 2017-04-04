@@ -44,43 +44,40 @@
 <br><br><br>
 
 <section style="font-family: 'Raleway', sans-serif;">
+
   <!--for demo wrap-->
   <h1>Transactions</h1>
+<br><Br><Br>
+<div align="center"><input type="text" id="search" class="form-control col-lg-6" placeholder="Search By Name"></div>
+<br><br><br>
 
-  <div class="tbl-header">
-    <table cellpadding="0" cellspacing="0" border="0">
-      <thead>
-        <tr>
-          <th>Amount</th>
-          <th>Type</th>
-          <th>Intern Name</th>
-          <th>Date</th>
-          <th>Done By</th>
-          <th>Reference</th>
-        </tr>
-      </thead>
-    </table>
-  </div>
-  
-  <div class="tbl-content">
-    <table cellpadding="0" cellspacing="0" border="0">
-    {% for i in transactions %}
-      <tbody>
-        <tr>
-          <td>{{i.amount}}</td>
-          <td>{{i.type}} </td>
-          <td>{{i.intern_name}}</td>
-          <td>{{i.date}}</td>
-          <td>{{i.done_by}}</td>
-          <td>{{i.reference}}</td>
-        </tr>
-      </tbody>
-       {% endfor %}
-    </table>
-  </div>
+<table class="table nofill table-striped" style="width: 100%;">
+<thead>
+<tr>
+<th class="text-left">Amount</th>
+<th class="text-left">Type</th>
+<th class="text-left">Intern Name</th>
+<th class="text-left">Date</th>
+<th class="text-left">Done By</th>
+<th class="text-left">Reference</th>
+</tr>
+</thead>
+<tbody class="table-hover">
+{% for i in transactions %}
+<tr>
+<td class="text-left">{{i['amount']}}</td>
+<td class="text-left">{{i['type']}}</td>
+<td class="text-left">{{i['intern_name']}}</td>
+<td class="text-left">{{i['date']}}</td>
+<td class="text-left">{{i['done_by']}}</td>
+<td class="text-left">{{i['reference']}}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
 </section>
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
-    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
   </body>
@@ -92,5 +89,87 @@ $(window).on("load resize ", function() {
   $('.tbl-header').css({'padding-right':scrollWidth});
 }).resize();
 
+
+
+$("#search").keyup(function(){
+      var search_term = $(this).val();
+
+    if(search_term != ''){
+
+$.ajax({
+  type: "POST",
+  contentType: "application/json; charset=utf-8",
+  url: "/search/transactions",
+  dataType: "json",
+  data: JSON.stringify({'query': search_term}),
+  success: function (data) {
+
+
+   if (data.response.length != 0){
+    //console.log(data.response[0])
+    
+    reply = '';
+  
+;
+    for (i = 0; i < data.response.length; i++){
+      reply = reply+'<tbody>'+
+        '<tr>'+
+          '<td>'+data.response[i][0]+'</td>'+
+          '<td>'+data.response[i][1]+'</td>'+
+          '<td>'+data.response[i][2]+'</td>'+
+          '<td>'+data.response[i][3]+'</td>'+
+          '<td>'+data.response[i][4]+'</td>'+
+          '<td>'+data.response[i][5]+'</td>'+
+        '</tr>'+
+      '</tbody>'
+      
+        //console.log(data.response[i][2])
+        $("#results").html('asd')
+        $("#results").html(reply)
+        /*
+          
+    
+    '{% for i in transactions %}''
+      '<tbody>'
+        '<tr>'
+          '<td>{{i.amount}}</td>
+          '<td>{{i.type}} </td>'
+          '<td>{{i.intern_name}}</td>'
+          '<td>{{i.date}}</td>'
+          '<td>{{i.done_by}}</td>'
+          '<td>{{i.reference}}</td>'
+        '</tr>'
+      '</tbody>'
+       '{% endfor %}'
+    '</table>'
+  '</div>'
+  */
+        
+    //  var name = data.response[i][0];
+     //  reply = reply+'<div class="ui card">  <div class="image">  <img src="/static/img/'+data.response[i][1]+'"></img>  <div class="content"> <a href="#"onclick="change_val(this.text)"> '  +data.response[i][0]+  '</a>  </div>'
+
+
+     // $("#results").html(
+     //   reply
+     //   )
+   // }} 
+   // else{
+    //  $("#results").html(
+     //   '<h3>'+'No results'+'</h3>'
+     //   )
+
+    }
+    
+
+
+
+    }
+
+  }
+
+});
+
+}
+});
 </script>
 </html>

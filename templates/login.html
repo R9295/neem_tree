@@ -62,6 +62,7 @@
     console.log(data)
     Cookies.set('key',data.key);
     Cookies.set('email',data.email)
+    Cookies.set('type', data.type)
     if (data.type === 'staff') {
       window.location = "/home/staff";
     }

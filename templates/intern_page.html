@@ -101,11 +101,26 @@
   </div>
 
 
+ <div class="extra content">
+    <a>
+      <i class="user icon"></i>
+     {% for i in intern.scheme%}
+     {{i.type}} from<br> {{i.start_date}} to {{i.end_date}}<br><br>
+     {% endfor %}
+    </a>
+  </div>
+
+
 
 
 
 
 </div>
+</div >
+<br><br><br>
+<div align="center">
+<a href="/add_scheme/{{intern._id}}"><button class="btn btn-lg" >Add Scheme</button></a>
+  
 </div>
   </div>
 
