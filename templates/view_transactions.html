@@ -51,7 +51,7 @@
 <div align="center"><input type="text" id="search" class="form-control col-lg-6" placeholder="Search By Name"></div>
 <br><br><br>
 
-<table class="table nofill table-striped" style="width: 100%;">
+<table class="table nofill table-striped" style="width: 100%;" id="clean">
 <thead>
 <tr>
 <th class="text-left">Amount</th>
@@ -62,7 +62,8 @@
 <th class="text-left">Reference</th>
 </tr>
 </thead>
-<tbody class="table-hover">
+<tbody class="table-hover" id="clear">
+
 {% for i in transactions %}
 <tr>
 <td class="text-left">{{i['amount']}}</td>
@@ -73,8 +74,13 @@
 <td class="text-left">{{i['reference']}}</td>
 </tr>
 {% endfor %}
+
+
 </tbody>
 </table>
+<div id="empty">
+  
+</div>
 </section>
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
@@ -108,55 +114,40 @@ $.ajax({
    if (data.response.length != 0){
     //console.log(data.response[0])
     
-    reply = '';
+    cell = '<table class="table nofill table-striped" style="width: 100%;">'+
+'<thead>'+
+'<tr>'+
+'<th class="text-left">Amount</th>'+
+'<th class="text-left">Type</th>'+
+'<th class="text-left">Intern Name</th>'+
+'<th class="text-left">Date</th>'+
+'<th class="text-left">Done By</th>'+
+'<th class="text-left">Reference</th>'+
+'</tr>'+
+'</thead>'+
+'<tbody class="table-hover" id="clear">';
+
+  post_data = '';
+  end_cell = '</tbody></table>'
   
-;
+
     for (i = 0; i < data.response.length; i++){
-      reply = reply+'<tbody>'+
+      post_data = post_data+
         '<tr>'+
-          '<td>'+data.response[i][0]+'</td>'+
-          '<td>'+data.response[i][1]+'</td>'+
-          '<td>'+data.response[i][2]+'</td>'+
-          '<td>'+data.response[i][3]+'</td>'+
-          '<td>'+data.response[i][4]+'</td>'+
-          '<td>'+data.response[i][5]+'</td>'+
-        '</tr>'+
-      '</tbody>'
+          '<td class="text-left">'+data.response[i][0]+'</td>'+
+          '<td class="text-left">'+data.response[i][1]+'</td>'+
+          '<td class="text-left">'+data.response[i][2]+'</td>'+
+          '<td class="text-left">'+data.response[i][3]+'</td>'+
+          '<td class="text-left">'+data.response[i][4]+'</td>'+
+          '<td class="text-left">'+data.response[i][5]+'</td>'+
+        '</tr>'
       
         //console.log(data.response[i][2])
-        $("#results").html('asd')
-        $("#results").html(reply)
-        /*
-          
-    
-    '{% for i in transactions %}''
-      '<tbody>'
-        '<tr>'
-          '<td>{{i.amount}}</td>
-          '<td>{{i.type}} </td>'
-          '<td>{{i.intern_name}}</td>'
-          '<td>{{i.date}}</td>'
-          '<td>{{i.done_by}}</td>'
-          '<td>{{i.reference}}</td>'
-        '</tr>'
-      '</tbody>'
-       '{% endfor %}'
-    '</table>'
-  '</div>'
-  */
+        $("#clean").empty()
+        $("#empty").empty()
+        reply = cell+post_data+end_cell
+        $("#empty").html(reply)
         
-    //  var name = data.response[i][0];
-     //  reply = reply+'<div class="ui card">  <div class="image">  <img src="/static/img/'+data.response[i][1]+'"></img>  <div class="content"> <a href="#"onclick="change_val(this.text)"> '  +data.response[i][0]+  '</a>  </div>'
-
-
-     // $("#results").html(
-     //   reply
-     //   )
-   // }} 
-   // else{
-    //  $("#results").html(
-     //   '<h3>'+'No results'+'</h3>'
-     //   )
 
     }
     
