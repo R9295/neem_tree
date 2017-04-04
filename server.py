@@ -323,10 +323,22 @@ def add_scheme(id):
 
 
 			if request.form.get('snack'):
+				start_date = request.form['start_date']
+				start_year = start_date[0:4]
+				start_month = start_date[5:7]
+				start_day = start_date[8:10]
+				start_date= start_day+'/'+start_month+'/'+start_year
+
+				end_date = request.form['end_date']
+				end_year = end_date[0:4]
+				end_month = end_date[5:7]
+				end_day = end_date[8:10]
+				end_date= end_day+'/'+end_month+'/'+end_year
+
 				data = {
 				'type' : 'snack',
-				'start_date' : request.form['start_date'],
-				'end_date' : request.form['end_date']
+				'start_date' : start_date,
+				'end_date' : end_date
 				}
 				user['scheme'].append(data)
 			else:
@@ -335,10 +347,22 @@ def add_scheme(id):
 
 
 			if request.form.get('breakfast'):
+				start_date = request.form['start_date']
+				start_year = start_date[0:4]
+				start_month = start_date[5:7]
+				start_day = start_date[8:10]
+				start_date= start_day+'/'+start_month+'/'+start_year
+
+				end_date = request.form['end_date']
+				end_year = end_date[0:4]
+				end_month = end_date[5:7]
+				end_day = end_date[8:10]
+				end_date= end_day+'/'+end_month+'/'+end_year
+
 				data = {
 				'type' : 'breakfast',
-				'start_date' : request.form['start_date'],
-				'end_date' : request.form['end_date']
+				'start_date' : start_date,
+				'end_date' : end_date
 				}
 				user['scheme'].append(data)
 			else:
@@ -346,20 +370,44 @@ def add_scheme(id):
 
 
 			if request.form.get('lunch'):
+				start_date = request.form['start_date']
+				start_year = start_date[0:4]
+				start_month = start_date[5:7]
+				start_day = start_date[8:10]
+				start_date= start_day+'/'+start_month+'/'+start_year
+
+				end_date = request.form['end_date']
+				end_year = end_date[0:4]
+				end_month = end_date[5:7]
+				end_day = end_date[8:10]
+				end_date= end_day+'/'+end_month+'/'+end_year
+
 				data = {
 				'type' : 'lunch',
-				'start_date' : request.form['start_date'],
-				'end_date' : request.form['end_date']
+				'start_date' : start_date,
+				'end_date' : end_date
 				}
 				user['scheme'].append(data)
 			else:
 				lunch = False
 
 			if request.form.get('dinner'):
+				start_date = request.form['start_date']
+				start_year = start_date[0:4]
+				start_month = start_date[5:7]
+				start_day = start_date[8:10]
+				start_date= start_day+'/'+start_month+'/'+start_year
+
+				end_date = request.form['end_date']
+				end_year = end_date[0:4]
+				end_month = end_date[5:7]
+				end_day = end_date[8:10]
+				end_date= end_day+'/'+end_month+'/'+end_year
+
 				data = {
 				'type' : 'dinner',
-				'start_date' : request.form['start_date'],
-				'end_date' : request.form['end_date']
+				'start_date' : start_date,
+				'end_date' : end_date
 				}
 				user['scheme'].append(data)
 			else:
@@ -407,7 +455,18 @@ def individual_intern(id):
 	if db.active.find({'key' : key}).count() != 0:
 		user = db.active.find_one({'key' : key})
 		intern = db.intern.find_one({'_id': ObjectId(id)})
-		user = db.unit_holder.find_one({'email':user['email']})
+		usr_type = request.cookies.get('type')
+		user = None
+		if usr_type == 'staff':
+			user = db.staff.find_one({'email'  :  request.cookies.get('email')})
+		if usr_type == 'unit':
+			if db.unit_holder.find({'email' : request.cookies.get('email')}).count() == 1:
+				user = db.staff.find_one({'email'  :  request.cookies.get('email')})
+				if user['unit_name'] == intern['unit_name']:
+					pass
+				else:
+					return redirect('/home/unit')
+
 		return render_template('intern_page.html',user=user,intern=intern)
 	else:
 		return redirect('/login')
@@ -488,7 +547,12 @@ def commit_edit_intern(id):
 			updates = {}
 			user = db.intern.find_one({'_id'  :ObjectId(id)})
 			if name != None:
+				transactions = db.transactions.find({'intern_name': user['name']})
 				user['name'] = name
+				for i in transactions:
+					i['intern_name'] = name
+					db.transactions.save(i)
+
 			if start_date != None:
 				user['start_date'] = start_date
 			if end_date != None:
@@ -498,7 +562,6 @@ def commit_edit_intern(id):
 			if phone_number != None:
 				user['phone_number'] = phone_number
 			db.intern.save(user)
-			print 'done'
 			return jsonify({'response'  : 'success'})
 
 
