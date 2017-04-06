@@ -421,6 +421,20 @@ def add_scheme(id):
 			
 		return render_template('add_scheme.html', active_user=active_user,user=user )
 
+
+@app.route('/remove/scheme', methods=['GET','POST'])
+def remove_scheme():
+	interns = db.intern.find_one({'name' : request.json['intern_name']})
+	type = request.json['type']
+	for i in intern['scheme']:
+		if i['type'] == type:
+			index = intern['scheme'].index(i)
+			print index
+			intern['scheme'].pop(index)
+			
+		db.intern.save(interns)
+	return redirect('/%s'%(intern['_id']))
+
 #Intern List 
 @app.route('/interns')
 def intern_list_staff():
@@ -780,4 +794,4 @@ def logout():
 
 if __name__ == "__main__":
 	configure_uploads(app, photos)
-	app.run(debug=True, host='0.0.0.0',port=5000)
+	app.run()
