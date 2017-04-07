@@ -17,7 +17,7 @@ from info_data import *
 
 #Connecting to DB
 
-client = MongoClient(uri)
+client = MongoClient()
 db = client.neem_tree
 
 
