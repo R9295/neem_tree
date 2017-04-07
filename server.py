@@ -12,7 +12,7 @@ from time import gmtime,strftime
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from datetime import *
 import datetime
-from info_data import *
+
 
 
 #Connecting to DB
@@ -794,4 +794,4 @@ def logout():
 
 if __name__ == "__main__":
 	configure_uploads(app, photos)
-	app.run()
+	app.run(debug=True)
