@@ -795,3 +795,4 @@ def logout():
 
 if __name__ == "__main__":
 	configure_uploads(app, photos)
+	app.run()
