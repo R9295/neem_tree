@@ -251,6 +251,7 @@ def add_an_intern():
 
 @app.route('/add/intern/staff', methods=['GET','POST'])
 def add_intern_staff():
+
 	key = request.cookies.get('key')
 	error = ''
 	user_type = None
@@ -267,39 +268,38 @@ def add_intern_staff():
 			return redirect('/login')
 
 		if request.method == 'POST':
-			if len(request.form['email']) == 0:
-						error = 'Invalid email'
+		#	if len(request.form['email']) == 0:
+		#				error = 'Invalid email'
 
-			if len(request.form['name'])  == 0:
-						error = 'Invalid Name'
+		#	if len(request.form['name'])  == 0:
+		#				error = 'Invalid Name'
 
 				
-			if request.form['phone_number'].isdigit() != True or len(str(request.form['phone_number'])) != 10 :
-            			error = 'Invalid phone number'
+		#	if request.form['phone_number'].isdigit() != True or len(str(request.form['phone_number'])) != 10 :
+         #   			error = 'Invalid phone number'
+         	filename = photos.save(request.files['img'])
+         	return filename
 
-			if error == '':
-				email = request.cookies.get('email')
-				user = db.staff.find_one({'email'  : email })
-				filename = photos.save(request.files['img'])
-				data = {
-				"name":request.form['name'],
-				"unit_name":request.form['unit_name'],
-				"email":request.form['email'],
-				"phone_number":request.form['phone_number'],
-				"start_date":request.form['start_date'],
-				"end_date":None,
-				"balance": 0,
-				"img": filename,
-				"scheme":[]
-				}
-				
-				try:
-					db.intern.insert_one(data)
-					return redirect('/interns')			
-				except:
-					return "Couldn't create intern. Contact admin"
-
-
+		#	if error == '':
+		#		email = request.cookies.get('email')
+		#		user = db.staff.find_one({'email'  : email })
+		#3		filename = photos.save(request.files['img'])
+		#		data = {
+		#		"name":request.form['name'],
+		#		"unit_name":request.form['unit_name'],
+		#		"email":request.form['email'],
+		#		"phone_number":request.form['phone_number'],
+		#		"start_date":request.form['start_date'],
+		#		"end_date":None,
+		#		"balance": 0,
+		#		"img": filename,
+		#		"scheme":[]
+		#		}
+		#		
+		#	
+		#		db.intern.insert_one(data)
+		#		return redirect('/interns')			
+			
 		return render_template('add_intern_staff.html',user=user,error=error)
 	else:
 		return redirect('/login')
