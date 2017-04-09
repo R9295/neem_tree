@@ -268,6 +268,9 @@ def add_intern_staff():
 			return redirect('/login')
 
 		if request.method == 'POST':
+			filename = photos.save(request.files['img'])
+			return filename
+
 		#	if len(request.form['email']) == 0:
 		#				error = 'Invalid email'
 
@@ -277,9 +280,7 @@ def add_intern_staff():
 				
 		#	if request.form['phone_number'].isdigit() != True or len(str(request.form['phone_number'])) != 10 :
          #   			error = 'Invalid phone number'
-         	filename = photos.save(request.files['img'])
-         	return filename
-
+         	
 		#	if error == '':
 		#		email = request.cookies.get('email')
 		#		user = db.staff.find_one({'email'  : email })
