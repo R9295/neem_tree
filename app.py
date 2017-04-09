@@ -35,7 +35,7 @@ app = Flask(__name__)
 
 #Configuring where photos should be uploaded.
 photos = UploadSet('photos', IMAGES)
-app.config['UPLOADED_PHOTOS_DEST'] = '/home/www/neem_tree/static/img/'
+app.config['UPLOADED_PHOTOS_DEST'] = '/interns/img'
 
 
 
@@ -795,4 +795,3 @@ def logout():
 
 if __name__ == "__main__":
 	configure_uploads(app, photos)
-	app.run()
