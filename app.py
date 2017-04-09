@@ -35,7 +35,7 @@ app = Flask(__name__)
 
 #Configuring where photos should be uploaded.
 photos = UploadSet('photos', IMAGES)
-app.config['UPLOADED_PHOTOS_DEST'] = 'static/img'
+app.config['UPLOADED_PHOTOS_DEST'] = '/home/www/neem_tree/static/img/'
 
 
 
