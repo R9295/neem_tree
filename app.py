@@ -17,7 +17,7 @@ import datetime
 
 #Connecting to DB
 
-client = MongoClient()
+client = MongoClient(connect=False)
 db = client.neem_tree
 
 
