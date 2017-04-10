@@ -34,9 +34,9 @@ app = Flask(__name__)
 
 
 #Configuring where photos should be uploaded.
-photos = UploadSet('photos', ('jpg','png','svg'))
+photos = UploadSet('photos', IMAGES)
 app.config['UPLOADED_PHOTOS_DEST'] = 'static/img'
-
+configure_uploads(app, photos)
 
 
 #Login for Unit Holder and Neem Tree Staff
@@ -794,5 +794,5 @@ def logout():
     	return resp
 
 if __name__ == "__main__":
-	configure_uploads(app, (photos))
+	
 	app.run()
