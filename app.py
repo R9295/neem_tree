@@ -34,7 +34,7 @@ app = Flask(__name__)
 
 
 #Configuring where photos should be uploaded.
-photos = UploadSet('photos', IMAGES)
+photos = UploadSet('photos', ('jpg','png','svg'))
 app.config['UPLOADED_PHOTOS_DEST'] = 'static/img'
 
 
@@ -269,37 +269,37 @@ def add_intern_staff():
 
 		if request.method == 'POST':
 			filename = photos.save(request.files['img'])
-			return filename
+			#return filename
 
-		#	if len(request.form['email']) == 0:
-		#				error = 'Invalid email'
+			if len(request.form['email']) == 0:
+						error = 'Invalid email'
 
-		#	if len(request.form['name'])  == 0:
-		#				error = 'Invalid Name'
+			if len(request.form['name'])  == 0:
+						error = 'Invalid Name'
 
 				
-		#	if request.form['phone_number'].isdigit() != True or len(str(request.form['phone_number'])) != 10 :
-         #   			error = 'Invalid phone number'
+			if request.form['phone_number'].isdigit() != True or len(str(request.form['phone_number'])) != 10 :
+            			error = 'Invalid phone number'
          	
-		#	if error == '':
-		#		email = request.cookies.get('email')
-		#		user = db.staff.find_one({'email'  : email })
-		#3		filename = photos.save(request.files['img'])
-		#		data = {
-		#		"name":request.form['name'],
-		#		"unit_name":request.form['unit_name'],
-		#		"email":request.form['email'],
-		#		"phone_number":request.form['phone_number'],
-		#		"start_date":request.form['start_date'],
-		#		"end_date":None,
-		#		"balance": 0,
-		#		"img": filename,
-		#		"scheme":[]
-		#		}
-		#		
-		#	
-		#		db.intern.insert_one(data)
-		#		return redirect('/interns')			
+			if error == '':
+				email = request.cookies.get('email')
+				user = db.staff.find_one({'email'  : email })
+				filename = photos.save(request.files['img'])
+				data = {
+				"name":request.form['name'],
+				"unit_name":request.form['unit_name'],
+				"email":request.form['email'],
+				"phone_number":request.form['phone_number'],
+				"start_date":request.form['start_date'],
+				"end_date":None,
+				"balance": 0,
+				"img": filename,
+				"scheme":[]
+				}
+				
+			
+				db.intern.insert_one(data)
+				return redirect('/interns')			
 			
 		return render_template('add_intern_staff.html',user=user,error=error)
 	else:
@@ -794,5 +794,5 @@ def logout():
     	return resp
 
 if __name__ == "__main__":
-	configure_uploads(app, photos)
+	configure_uploads(app, (photos))
 	app.run()
