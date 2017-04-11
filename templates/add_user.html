@@ -20,9 +20,13 @@
     <input type="text" name="" class="form-control" id="unit_name" placeholder="Unit Name">
     <input type="text" name="" class="form-control" id="email" placeholder="Email">
     <input type="text" name="" class="form-control" id="phone_number" placeholder="Phone Number">
+    
+    Are you a human?<h3 id="numbers"></h3>
+    
+
     <div id="callback_unit" style="color:red;"></div>
-    <button id="submit">Sumbit</button>
-      
+    <button id="submit" class="btn btn-md" style="background-color: white;border-color:black;color:black;" disabled />Sumbit</button>
+       
     </div>
 <br><br><br><br>
 <h1 align="center">Neem Tree Staff</h1>
@@ -31,8 +35,11 @@
     <input type="password" name="" class="form-control" id="password_neem" placeholder="Password">
     <input type="text" name="" class="form-control" id="email_neem" placeholder="Email">
     <input type="text" name="" class="form-control" id="phone_number_neem" placeholder="Phone Number">
+    Are you a human?<h3 id="numbers_staff"></h3>
+
+
     <div id="callback_staff" style="color:red;"></div>
-    <button id="neem_submit">Sumbit</button>
+    <button id="neem_submit" class="btn btn-md" style="background-color: white;border-color:black;color:black;" disabled />Sumbit</button>
       
     </div>
 
@@ -48,6 +55,62 @@
   </body>
 
   <script type="text/javascript">
+  
+  var captcha_1 = Math.floor((Math.random() * 10) + 1);
+  var captcha_2 = Math.floor((Math.random() * 10) + 1);
+  var captcha_3 = Math.floor((Math.random() * 10) + 1);
+  var captcha_4 = Math.floor((Math.random() * 10) + 1);
+  var captcha_total = captcha_2 + captcha_1
+  var captcha_total_staff = captcha_3 + captcha_4
+
+
+  $("#numbers").html(captcha_1+'+'+captcha_2+'='+'<input type="text" name="total" id="total" class="col-md-1">');
+  $("#numbers_staff").html(captcha_3+'+'+captcha_4+'='+'<input type="text" name="total" id="total_staff" class="col-md-1">');
+
+
+  $("#total").on('keyup', function(){
+    jQuery.fn.extend({
+        disable: function(state) {
+            return this.each(function() {
+                this.disabled = state;
+            });
+        }
+    });
+    if ($("#total").val() != captcha_total)
+
+    {
+      $("#submit").prop('disabled', true);
+    $("#callback_unit").text('incorrect captcha!')
+
+    }
+    else{
+      $("#callback_unit").text('')
+      $("#submit").prop('disabled', false);
+    }
+  });
+
+
+  $("#total_staff").on('keyup', function(){
+    jQuery.fn.extend({
+        disable: function(state) {
+            return this.each(function() {
+                this.disabled = state;
+            });
+        }
+    });
+    if ($("#total_staff").val() != captcha_total_staff)
+
+    {
+      $("#neem_submit").prop('disabled', true);
+    $("#callback_staff").text('incorrect captcha!')
+
+    }
+    else{
+      $("#callback_staff").text('')
+      $("#neem_submit").prop('disabled', false);
+    }
+  });
+
 
    //Submiting Unit Holder
   $("#submit").on('click', function(){
@@ -59,23 +122,23 @@
     
     //checking if values are not empty, if not, post!
     if (person_name.length ===0) {
-      console.log('Person Name is empty');
+      $("#callback_unit").text('Person Name is empty');
     }
     else if(password.length === 0){
-      console.log('Password is empty'); 
+      $("#callback_unit").text('Password is empty'); 
     }
 
     else if(email.length === 0){
-      console.log('Email is empty');
+      $("#callback_unit").text('Email is empty');
 
     }
   else if(phone_number.length === 0){
-      console.log('Phone Number is empty');
+      $("#callback_unit").text('Phone Number is empty');
 
     }
 
     else if(unit_name.length === 0){
-      console.log('Unit Name is empty');
+      $("#callback_unit").text('Unit Name is empty');
 
     }
     else{
@@ -87,7 +150,7 @@
   contentType:"application/json; charset=utf-8",
   data: data,
   success: function(data){
-    $("#callback_unit").text(data.response);
+    $("#callback_unit").html('<h3 style="color:green !important;">Success<h3>'+'<a href="/login"><button class="btn btn-md" style="color:green;background-color:white ;border-color:green;">Login</button></a><br><br>');
   },
   dataType: "json"
 });
@@ -107,18 +170,18 @@
     
     //checking if values are not empty, if not, post!
     if (person_name.length ===0) {
-      console.log('Person Name is empty');
+      $("#callback_staff").text('Person Name is empty');
     }
     else if(password.length === 0){
-      console.log('Password is empty'); 
+      $("#callback_staff").text('Password is empty'); 
     }
 
     else if(email.length === 0){
-      console.log('Email is empty');
+      $("#callback_staff").text('Email is empty');
 
     }
   else if(phone_number.length === 0){
-      console.log('Phone Number is empty');
+      $("#callback_staff").text('Phone Number is empty');
 
     }
 
@@ -131,7 +194,7 @@
   contentType:"application/json; charset=utf-8",
   data: data,
   success: function(data){
-    $("#callback_staff").text(data.response);
+    $("#callback_staff").html('<h3 style="color:green !important;">Success<h3>'+'<a href="/login"><button class="btn btn-md" style="color:green;background-color:white ;border-color:green;">Login</button></a><br><br>');
   },
   dataType: "json"
 });
@@ -140,6 +203,5 @@
     }
   });
 
-    
 </script>
 </html>
