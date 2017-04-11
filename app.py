@@ -268,7 +268,6 @@ def add_intern_staff():
 			return redirect('/login')
 
 		if request.method == 'POST':
-			filename = photos.save(request.files['img'])
 			#return filename
 
 			if len(request.form['email']) == 0:
@@ -284,7 +283,6 @@ def add_intern_staff():
 			if error == '':
 				email = request.cookies.get('email')
 				user = db.staff.find_one({'email'  : email })
-				filename = photos.save(request.files['img'])
 				data = {
 				"name":request.form['name'],
 				"unit_name":request.form['unit_name'],
@@ -293,7 +291,7 @@ def add_intern_staff():
 				"start_date":request.form['start_date'],
 				"end_date":None,
 				"balance": 0,
-				"img": filename,
+				"img": photos.save(request.files['img']),
 				"scheme":[]
 				}
 				
@@ -794,5 +792,4 @@ def logout():
     	return resp
 
 if __name__ == "__main__":
-	
 	app.run()

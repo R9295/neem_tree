@@ -4,7 +4,7 @@ db = client.neem_tree
 
 #Interns
 db.intern.delete_many({})
-db.interns.delete_many({})
+
 
 #Unit Holder
 db.unit_holder.delete_many({})
@@ -15,8 +15,5 @@ db.staff.delete_many({})
 #Active
 db.active.delete_many({})
 
-#Transactions
+#ransactions
 db.transactions.delete_many({})
-
-print 'CLEAR'
-	
