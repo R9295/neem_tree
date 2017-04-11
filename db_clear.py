@@ -18,3 +18,5 @@ db.active.delete_many({})
 #Transactions
 db.transactions.delete_many({})
 
+print 'CLEAR'
+	
