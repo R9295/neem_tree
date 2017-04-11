@@ -1,6 +1,6 @@
 from pymongo import *
 client = MongoClient()
-db = client.neemtree
+db = client.neem_tree
 
 #Interns
 db.intern.delete_many({})
