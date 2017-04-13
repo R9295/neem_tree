@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 
 
+<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.pink-red.min.css" />
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
@@ -46,46 +48,43 @@
 <section style="font-family: 'Raleway', sans-serif;">
 
   <!--for demo wrap-->
-  <h1>Transactions</h1>
+  <h1 align="center">Transactions</h1>
 <br><Br><Br>
 <div align="center"><input type="text" id="search" class="form-control col-lg-6" placeholder="Search By Name"></div>
 <br><br><br>
-
-<table class="table nofill table-striped" style="width: 100%;" id="clean">
-<thead>
-<tr>
-<th class="text-left">Amount</th>
-<th class="text-left">Type</th>
-<th class="text-left">Intern Name</th>
-<th class="text-left">Date</th>
-<th class="text-left">Done By</th>
-<th class="text-left">Reference</th>
-</tr>
-</thead>
-<tbody class="table-hover" id="clear">
-
-{% for i in transactions %}
-<tr>
-<td class="text-left">{{i['amount']}}</td>
-<td class="text-left">{{i['type']}}</td>
-<td class="text-left">{{i['intern_name']}}</td>
-<td class="text-left">{{i['date']}}</td>
-<td class="text-left">{{i['done_by']}}</td>
-<td class="text-left">{{i['reference']}}</td>
-</tr>
-{% endfor %}
-
-
-</tbody>
-</table>
 <div id="empty">
-  
+<table class="mdl-data-table mdl-js-data-table mdl-data-table__cell--non-numeric" align="center">
+  <thead>
+    <tr>
+      <th class="mdl-data-table__cell--non-numeric " >Intern Name</th>
+      <th class="mdl-data-table__cell--non-numeric">Amount</th>
+      <th class="mdl-data-table__cell--non-numeric">Type</th>
+      <th class="mdl-data-table__cell--non-numeric">Date</th>
+      <th class="mdl-data-table__cell--non-numeric">Done By</th>
+      <th class="mdl-data-table__cell--non-numeric">Reference</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for i in transactions %}
+    <tr>
+      <td class="mdl-data-table__cell--non-numeric">{{i['intern_name']}}</td>
+      <td class="mdl-data-table__cell--non-numeric">{{i['amount']}}</td>
+      <td class="mdl-data-table__cell--non-numeric">{{i['type']}}</td>
+      <td class="mdl-data-table__cell--non-numeric">{{i['date']}}</td>
+      <td class="mdl-data-table__cell--non-numeric">{{i['done_by']}}</td>
+      <td class="mdl-data-table__cell--non-numeric">{{i['reference']}}</td>
+    </tr>
+   {% endfor %}
+  </tbody>
+</table>
+<br><br><br>
 </div>
 </section>
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
   </body>
   <script>
   
@@ -114,38 +113,34 @@ $.ajax({
    if (data.response.length != 0){
     //console.log(data.response[0])
     
-    cell = '<table class="table nofill table-striped" style="width: 100%;">'+
-'<thead>'+
-'<tr>'+
-'<th class="text-left">Amount</th>'+
-'<th class="text-left">Type</th>'+
-'<th class="text-left">Intern Name</th>'+
-'<th class="text-left">Date</th>'+
-'<th class="text-left">Done By</th>'+
-'<th class="text-left">Reference</th>'+
-'</tr>'+
-'</thead>'+
-'<tbody class="table-hover" id="clear">';
+    cell = '<table class="mdl-data-table mdl-js-data-table mdl-data-table__cell--non-numeric" align="center">'+
+  '<thead>'+
+   '<tr>'+
+    '<th class="mdl-data-table__cell--non-numeric " >Intern Name</th>'+
+     '<th class="mdl-data-table__cell--non-numeric">Amount</th>'+
+      '<th class="mdl-data-table__cell--non-numeric">Type</th>'+
+      '<th class="mdl-data-table__cell--non-numeric">Date</th>'+
+      '<th class="mdl-data-table__cell--non-numeric">Done By</th>'+
+      '<th class="mdl-data-table__cell--non-numeric">Reference</th>'+
+    '</tr>'+
+  '</thead>'+
+  '<tbody>'+
+    '<tr>';
 
   post_data = '';
-  end_cell = '</tbody></table>'
   
 
     for (i = 0; i < data.response.length; i++){
       post_data = post_data+
-        '<tr>'+
-          '<td class="text-left">'+data.response[i][0]+'</td>'+
-          '<td class="text-left">'+data.response[i][1]+'</td>'+
-          '<td class="text-left">'+data.response[i][2]+'</td>'+
-          '<td class="text-left">'+data.response[i][3]+'</td>'+
-          '<td class="text-left">'+data.response[i][4]+'</td>'+
-          '<td class="text-left">'+data.response[i][5]+'</td>'+
-        '</tr>'
-      
-        //console.log(data.response[i][2])
-        $("#clean").empty()
+          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][2]+'</td>'+
+          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][1]+'</td>'+
+          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][2]+'</td>'+
+          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][3]+'</td>'+
+          '<td class="mdl-data-table__cell--non-numerict">'+data.response[i][4]+'</td>'+
+          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][5]+'</td>'+
+        '</tr>'+'</tbody></table>'
         $("#empty").empty()
-        reply = cell+post_data+end_cell
+        reply = cell+post_data
         $("#empty").html(reply)
         
 
