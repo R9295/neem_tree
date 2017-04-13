@@ -222,18 +222,35 @@ def add_an_intern():
 					error = 'Invalid phone number'
 
 				if error == '':
+
+	
+
+					start_date = request.form['start_date']
+					start_year = start_date[0:4]
+					start_month = start_date[5:7]
+					start_day = start_date[8:10]
+					start_date= start_day+'/'+start_month+'/'+start_year
+
+					end_date = request.form['end_date']
+					end_year = end_date[0:4]
+					end_month = end_date[5:7]
+					end_day = end_date[8:10]
+					end_date= end_day+'/'+end_month+'/'+end_year
+
+
+
 					email = request.cookies.get('email')
 					user = db.unit_holder.find_one({'email'  : email })
-					filename = photos.save(request.files['img'])
+
 					data = {
 					"name":request.form['name'],
 					"unit_name":user['unit_name'],
 					"email":request.form['email'],
 					"phone_number":request.form['phone_number'],
-					"start_date":request.form['start_date'],
-					"end_date":None,
+					"start_date":start_date,
+					"end_date":end_date,
 					"balance": 0,
-					"img": filename,
+					"img": photos.save(request.files['img']),
 					"scheme":[]
 					}
 					
@@ -268,6 +285,7 @@ def add_intern_staff():
 			return redirect('/login')
 
 		if request.method == 'POST':
+
 			#return filename
 
 			if len(request.form['email']) == 0:
@@ -281,6 +299,22 @@ def add_intern_staff():
             			error = 'Invalid phone number'
          	
 			if error == '':
+				
+
+				start_date = request.form['start_date']
+				start_year = start_date[0:4]
+				start_month = start_date[5:7]
+				start_day = start_date[8:10]
+				start_date= start_day+'/'+start_month+'/'+start_year
+				
+
+				end_date = request.form['end_date']
+				end_year = end_date[0:4]
+				end_month = end_date[5:7]
+				end_day = end_date[8:10]
+				end_date= end_day+'/'+end_month+'/'+end_year
+
+
 				email = request.cookies.get('email')
 				user = db.staff.find_one({'email'  : email })
 				data = {
@@ -288,8 +322,8 @@ def add_intern_staff():
 				"unit_name":request.form['unit_name'],
 				"email":request.form['email'],
 				"phone_number":request.form['phone_number'],
-				"start_date":request.form['start_date'],
-				"end_date":None,
+				"start_date":start_date,
+				"end_date":end_date,
 				"balance": 0,
 				"img": photos.save(request.files['img']),
 				"scheme":[]
@@ -461,9 +495,10 @@ def intern_list_staff():
 
 
 #Individual Intern
-@app.route('/<id>')
+@app.route('/intern/<id>')
 def individual_intern(id):
 	key = request.cookies.get('key')
+	type = request.cookies.get('type')
 	error = None
 	if db.active.find({'key' : key}).count() != 0:
 		user = db.active.find_one({'key' : key})
@@ -474,13 +509,13 @@ def individual_intern(id):
 			user = db.staff.find_one({'email'  :  request.cookies.get('email')})
 		if usr_type == 'unit':
 			if db.unit_holder.find({'email' : request.cookies.get('email')}).count() == 1:
-				user = db.staff.find_one({'email'  :  request.cookies.get('email')})
+				user = db.unit_holder.find_one({'email'  :  request.cookies.get('email')})
 				if user['unit_name'] == intern['unit_name']:
 					pass
 				else:
 					return redirect('/home/unit')
 
-		return render_template('intern_page.html',user=user,intern=intern)
+		return render_template('intern_page.html',user=user,intern=intern,type=type)
 	else:
 		return redirect('/login')
 
@@ -539,11 +574,21 @@ def commit_edit_intern(id):
 				
 			try:
 				start_date = request.json['start_date']
+				start_year = start_date[0:4]
+				start_month = start_date[5:7]
+				start_day = start_date[8:10]
+				start_date= start_day+'/'+start_month+'/'+start_year
+
 			except KeyError:
 				pass
 				
 			try:
 				end_date = request.json['end_date']
+				end_date = request.form['end_date']
+				end_year = end_date[0:4]
+				end_month = end_date[5:7]
+				end_day = end_date[8:10]
+				end_date= end_day+'/'+end_month+'/'+end_year
 			except KeyError:
 				pass
 				
@@ -579,7 +624,7 @@ def commit_edit_intern(id):
 
 
 
-		return render_template('edit_individual.html',user=user,intern=intern)
+		return render_template('edit_individual.html',user=user,intern=intern,type=type)
 	
 
 	else:
@@ -792,5 +837,5 @@ def logout():
     	return resp
 
 if __name__ == "__main__":
-	
-	app.run()
+	configure_uploads(app, photos)
+	app.run(debug = True)
