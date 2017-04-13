@@ -5,7 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+ <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
   </head>
@@ -14,11 +14,12 @@
     <br><br><br><br>
 
     
-    <div class="container">
+    <div class="container" style="font-family: 'Raleway', sans-serif;">
    
     
     <input type="text" name="" class="form-control" id="email" placeholder="Email">
     <input type="password" name="" class="form-control" id="password" placeholder="Password">
+    <div id="callback" style="color:red;font-family: 'Raleway', sans-serif;"></div>
    
     <button id="submit">Sumbit</button>
 
@@ -59,16 +60,28 @@
   contentType:"application/json; charset=utf-8",
   data: data,
   success: function(data){
-    console.log(data)
+
+
+    if (data.response == 'success'){
     Cookies.set('key',data.key);
     Cookies.set('email',data.email)
     Cookies.set('type', data.type)
+  }
     if (data.type === 'staff') {
       window.location = "/home/staff";
     }
-    else if (data.type === 'unit'){
+
+    if (data.type === 'unit'){
       window.location = "/home/unit";
     }
+
+    if (data.response == 'failure'){
+      $("#callback").text(data.info)
+    }
+  
+
+
+
   },
   dataType: "json"
 });

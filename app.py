@@ -60,52 +60,81 @@ def login():
         if user  == 1:
 			
 			user = db.staff.find_one({'email': request.json['email']})
-			if ph.verify(user['password'],request.json['password']) == True:
+			try:
+				if ph.verify(user['password'],request.json['password']) == True:
 
-				key = key_gen()
-				hashed_key = hashpw(key,gensalt())
-				active_user = {
-                    'email' : request.json['email'],
-                    'key'  : hashed_key,
-                    'type'  : 'staff'
-                }
+					key = key_gen()
+					hashed_key = hashpw(key,gensalt())
+					active_user = {
+	                    'email' : request.json['email'],
+                    	'key'  : hashed_key,
+                    	'type'  : 'staff'
+                	}
 				
+					response = {
+					"response": "success",
+					"email":request.json['email'],
+					"key": hashed_key,
+					"type":"staff"
+					}
+					
+
+					db.active.insert_one(active_user)
+					response = json.dumps(response)
+					
+					return response
+
+
+			except:
 				response = {
-				"response": "success",
-				"email":request.json['email'],
-				"key": hashed_key,
-				"type":"staff"
-				}
-				
-
-				db.active.insert_one(active_user)
+					"response": "failure",
+					"info"  :  "Email or Password is incorrect"
+					}
 				response = json.dumps(response)
-				
 				return response
+				
+			
+				
 
 
         elif unit == 1:
 			
 			user = db.unit_holder.find_one({'email': request.json['email']})
-			if ph.verify(user['password'],request.json['password']) == True:
+			try:
+				if ph.verify(user['password'],request.json['password']) == True:
 
-				key = key_gen()
-				hashed_key = hashpw(key,gensalt())
-				active_user = {
-                    'email' : request.json['email'],
-                    'key'  : hashed_key,
-                    'type'  : 'unit'
-                }
+					key = key_gen()
+					hashed_key = hashpw(key,gensalt())
+					active_user = {
+	                    'email' : request.json['email'],
+                    	'key'  : hashed_key,
+                    	'type'  : 'unit'
+                	}
+					response = {
+					"response": "success",
+					"email":request.json['email'],
+					"key": hashed_key,
+					"type":"unit"
+					}
+					db.active.insert_one(active_user)
+					response = json.dumps(response)
+					return response
+		
+			except:
 				response = {
-				"response": "success",
-				"email":request.json['email'],
-				"key": hashed_key,
-				"type":"unit"
-				}
-				db.active.insert_one(active_user)
+					"response": "failure",
+					"info"  :  "Email or Password is incorrect"
+					}
 				response = json.dumps(response)
 				return response
-			
+		
+        if user and unit == 0:
+			response = {
+				"response": "failure",
+				"info"  :  "Email or Password is incorrect"
+				}
+			response = json.dumps(response)
+			return response
 	return render_template('login.html')
 
 
