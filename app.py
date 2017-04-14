@@ -662,16 +662,68 @@ def commit_edit_intern(id):
 
 
 #View Transactions
-@app.route('/view_transactions')
+@app.route('/view_transactions', methods=['GET','POST'])
 def view_transactions():
 	key = request.cookies.get('key')
 	error = None
+	results = []
 	usr = db.active.find_one({'key' : key})
 	if db.active.find({'key' : key}).count() != 0 and usr['type'] == 'staff':
 		user = db.active.find_one({'key' : key})
 		user = db.staff.find_one({'email'  : user['email']})
 		transactions = db.transactions.find().sort([('_id', -1)])
+
+		if request.method == 'POST':
+
+			print 'xd'
+		
+
+			if request.json['type'] == 'money_out':
+				print 'XDDXD'
+				transactions = db.transactions.find({'type'  :  'money_out'}).sort([('_id', -1)])
+				for i in transactions:
+					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference']])
+				response = {}
+				response['response'] = results
+				response = json.dumps(response)
+				return response
+
+
+			if request.json['type'] == 'money_in':
+				transactions = db.transactions.find({'type'  :  'money_in'}).sort([('_id', -1)])
+				for i in transactions:
+					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference']])
+				response = {}
+				response['response'] = results
+				response = json.dumps(response)
+				return response
+
+
+			if request.json['type'] == 'lowest_amount':
+				transactions = db.transactions.find().sort([('amount', +1)])
+				for i in transactions:
+					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference']])
+				response = {}
+				response['response'] = results
+				response = json.dumps(response)
+				return response
+
+
+			if request.json['type'] == 'highest_amount':
+				transactions = db.transactions.find().sort([('amount', -1)])
+				for i in transactions:
+					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference']])
+				response = {}
+				response['response'] = results
+				response = json.dumps(response)
+				return response
+
+
+
+
+
 		return render_template('view_transactions.html',user=user,transactions=transactions)
+	
 	else:
 		return redirect('/login')
 

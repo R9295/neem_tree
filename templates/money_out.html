@@ -9,11 +9,12 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-
+    
         <link rel= "stylesheet" href= "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/components/card.min.css">
 
   </head>
   <body>
+  
     <nav class="navbar navbar-toggleable-md navbar-light bg-faded" style="background-color: black;font-family: 'Raleway', sans-serif;">
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -93,7 +94,7 @@
     }
 
     else{
-      data = JSON.stringify({'intern_name':person_name,'amount':amount,'reference':reference})
+      data = JSON.stringify({'intern_name':person_name.substring(1),'amount':amount,'reference':reference})
           $.ajax({
   type: "POST",
   url: '/money_out',
