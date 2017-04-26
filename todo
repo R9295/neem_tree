@@ -1,5 +1,12 @@
-Fix user name not appearing in navbar on intern page(staff)
 
-Include sending email to min if more than 2k is transferred by money in or money out.
+add approve interns
+add notifications for approve interns
+add logging for:
+	create_interns
+	approve interns
+	delete interns
 
-Fix date storage in schemes.
+
+change the on submit @ create intern to notify that its gonna be approved
+
+New Unit Holders and Staff have to be approved too by someone?

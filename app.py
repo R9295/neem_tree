@@ -57,7 +57,7 @@ def login():
 
 		user = db.staff.find({'email': request.json['email']}).count()
 		unit = db.unit_holder.find({'email': request.json['email']}).count()
-        if user  == 1:
+        if user  == 1 and unit == 0:
 			
 			user = db.staff.find_one({'email': request.json['email']})
 			try:
@@ -97,7 +97,7 @@ def login():
 				
 
 
-        elif unit == 1:
+        if unit == 1 and user == 0:
 			
 			user = db.unit_holder.find_one({'email': request.json['email']})
 			try:
@@ -178,48 +178,64 @@ def home_unit():
 #Create Neem Tree Staff API
 @app.route("/add_staff", methods=['POST'])
 def add_staff():
-	data ={
-	"name":request.json['name'],
-	"password": ph.hash(request.json['password']),
-	"email":request.json['email'],
-	"phone_number":request.json['phone_number']
-	}
+	user = db.staff.find({'email':request.json['email']}).count()
+	unit = db.unit_holder.find({'email':request.json['email']}).count()
+	if user != 0 or unit != 0:
+		response = {}
+		response['response'] = "exists"
+		response = json.dumps(response)
+		return response
+	else:
+		data ={
+		"name":request.json['name'],
+		"password": ph.hash(request.json['password']),
+		"email":request.json['email'],
+		"phone_number":request.json['phone_number']
+		}
 
-	try:
-		db.staff.insert_one(data)
-		response = {}
-		response['response'] = "success"
-		response = json.dumps(response)
-		return response
-	except:
-		response = {}
-		response['response'] = "failure"
-		response = json.dumps(response)
-		return response
+		try:
+			db.staff.insert_one(data)
+			response = {}
+			response['response'] = "success"
+			response = json.dumps(response)
+			return response
+		except:
+			response = {}
+			response['response'] = "failure"
+			response = json.dumps(response)
+			return response
 
 
 
 #Create Unit Holder Account API
 @app.route("/add_unit_holder", methods=['POST'])
 def add_unit_holder():
-	data ={
-	"unit_name":request.json['unit_name'],
-	"password": ph.hash(request.json['password']),
-	"name":request.json['person_name'],
-	"email":request.json['email'],
-	"phone_number":request.json['phone_number'],
-	}
-	try:
-		db.unit_holder.insert_one(data)
-		response = {}
-		response['response'] = "success"
-		response = json.dumps(response)
-		return response
-	except:
+	unit = db.unit_holder.find({'email':request.json['email']}).count()
+	user = db.staff.find({'email':request.json['email']}).count()
+	if user != 0 or unit != 0	:
 		response = {}
 		response['response'] = "failure"
 		response = json.dumps(response)
 		return response
+	else:
+		data ={
+		"unit_name":request.json['unit_name'],
+		"password": ph.hash(request.json['password']),
+		"name":request.json['person_name'],
+		"email":request.json['email'],
+		"phone_number":request.json['phone_number'],
+		}
+		try:
+			db.unit_holder.insert_one(data)
+			response = {}
+			response['response'] = "success"
+			response = json.dumps(response)
+			return response
+		except:
+			response = {}
+			response['response'] = "failure"
+			response = json.dumps(response)
+			return response
 
 
 @app.route('/add/intern', methods=['GET','POST'])
@@ -280,12 +296,13 @@ def add_an_intern():
 					"end_date":end_date,
 					"balance": 0,
 					"img": photos.save(request.files['img']),
-					"scheme":[]
+					"scheme":[],
+					"created_by":user['name']
 					}
 					
 					try:
-						db.intern.insert_one(data)
-						return redirect('/interns')			
+						db.approve_intern.insert_one(data)
+						
 					except:
 						return "Couldn't create intern. Contact admin"
 
@@ -355,11 +372,19 @@ def add_intern_staff():
 				"end_date":end_date,
 				"balance": 0,
 				"img": photos.save(request.files['img']),
-				"scheme":[]
+				"scheme":[],
+				"created_by":user['name']
 				}
 				
 			
 				db.intern.insert_one(data)
+
+				#Logging
+				log_data = {
+				"intern_name": data['name'],
+				"type": "created_intern",
+				"done_by": user['name']
+				}
 				return redirect('/interns')			
 			
 		return render_template('add_intern_staff.html',user=user,error=error)
@@ -915,7 +940,93 @@ def logout():
 		resp = make_response(redirect('/'))
     	resp.set_cookie('key','',expires=0)
     	resp.set_cookie('email','',expires=0)
+    	resp.set_cookie('type','',expires=0)
     	return resp
 
+@app.route('/approve/interns', methods=['GET','POST'])
+def approve_interns():
+	email = request.cookies.get('email')
+	type_user = request.cookies.get('type')
+	user = db.staff.find_one({'email'  :  email})
+	if type_user == 'staff':
+		interns = db.approve_intern.find()
+		intern_list = []
+		intern_count = db.approve_intern.find({}).count()
+		amount_of_interns = []
+		for i in interns:
+			intern_list.append([i['name'],i['img'],i['unit_name'],i['_id']])
+		i = 0
+		while i < intern_count:
+			amount_of_interns.append(i)
+			i = i+1
+
+		#Approve
+		if request.method == 'POST' and request.json['type'] == 'approve':
+
+			#Finding the intern to approve
+			approve_intern = db.approve_intern.find_one({'_id':ObjectId(request.json['id'])})
+
+			#Setting Intern Data
+			data = {
+				"name":approve_intern['name'],
+				"unit_name":approve_intern['unit_name'],
+				"email":approve_intern['email'],
+				"phone_number":approve_intern['phone_number'],
+				"start_date":approve_intern['start_date'],
+				"end_date":approve_intern['end_date'],
+				"balance": 0,
+				"img": approve_intern['img'],
+				"scheme":[],
+				"created_by":approve_intern['created_by']
+						}
+			#Inserting the intern 
+			db.intern.insert_one(data)
+			#Deleting intern
+			db.approve_intern.delete_one({'_id':ObjectId(request.json['id'])})
+
+			#Logging
+			log_data = {
+			"intern_name": data['name'],
+			"type": "approve",
+			"done_by": user['name']
+			}
+			db.log.insert_one(log_data)
+
+			#Find the intern
+			data = db.intern.find_one({'name':data['name']})
+			data_id = '%s'%(data['_id'])
+			response = {}
+			response['response'] = 'success_approve'
+			response['id'] = data_id
+			response = json.dumps(response)
+			return response
+
+
+	#Disapprove
+	if request.method == 'POST' and request.json['type'] == 'disapprove':
+
+			#Finding the intern to approve
+			approve_intern = db.approve_intern.find_one({'_id':ObjectId(request.json['id'])})
+			print approve_intern
+			
+
+			#Logging
+			log_data = {
+			"intern_name": approve_intern['name'],
+			"type": "disapprove",
+			"done_by": user['name']
+			}
+			#Deleting intern
+			db.approve_intern.delete_one({'_id':ObjectId(request.json['id'])})
+			db.log.insert_one(log_data)
+			response = {}
+			response['response'] = 'success_disapprove'
+			response = json.dumps(response)
+			return response
+
+	return render_template('approve_interns.html',intern=intern_list,user=user,intern_count=amount_of_interns)
+
+
 if __name__ == "__main__":
-	app.run()
+	configure_uploads(app, photos)
+	app.run(debug=True)
