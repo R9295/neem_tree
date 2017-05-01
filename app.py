@@ -151,9 +151,10 @@ def home_staff():
 	error = None
 	usr = db.active.find_one({'key' : key})
 	if db.active.find({'key' : key}).count() != 0 and usr['type'] == 'staff' :
+		to_approve = db.approve_intern.find({}).count()
 		user = db.active.find_one({'key' : key})
 		user = db.staff.find_one({'email':user['email']})
-		return render_template('home_staff.html',user=user)
+		return render_template('home_staff.html',user=user,approve=to_approve)
 	else:
 		return redirect('/login')
 
@@ -240,6 +241,7 @@ def add_unit_holder():
 
 @app.route('/add/intern', methods=['GET','POST'])
 def add_an_intern():
+	callback = ''
 	key = request.cookies.get('key')
 	error = ''
 	usr = db.active.find_one({'key' : key})
@@ -302,11 +304,12 @@ def add_an_intern():
 					
 					try:
 						db.approve_intern.insert_one(data)
+						callback = 'success'
 						
 					except:
 						return "Couldn't create intern. Contact admin"
 
-		return render_template('add_intern.html',user=user,error=error)
+		return render_template('add_intern.html',user=user,error=error,callback=callback)
 	else:
 		return redirect('/login')
 
@@ -383,8 +386,10 @@ def add_intern_staff():
 				log_data = {
 				"intern_name": data['name'],
 				"type": "created_intern",
-				"done_by": user['name']
+				"done_by": user['name'],
+				"date":strftime("%a, %d %b %Y", gmtime())
 				}
+				db.log.insert_one(log_data)
 				return redirect('/interns')			
 			
 		return render_template('add_intern_staff.html',user=user,error=error)
@@ -397,6 +402,9 @@ def add_scheme(id):
 	key = request.cookies.get('key')
 	email = request.cookies.get('email')
 	error = None
+	log_data = {}
+	log = {}
+	logdata = {}
 
 	if db.active.find({'key' : key}).count() != 0:
 		user = db.active.find_one({'key' : key})
@@ -428,6 +436,13 @@ def add_scheme(id):
 				'end_date' : end_date
 				}
 				user['scheme'].append(data)
+				log = {
+				"intern_name": user['name'],
+				"type": "snack",
+				"done_by": active_user['name'],
+				"date":strftime("%a, %d %b %Y", gmtime())
+				}
+				db.log.insert_one(log)
 			else:
 				snack = False
 
@@ -452,6 +467,13 @@ def add_scheme(id):
 				'end_date' : end_date
 				}
 				user['scheme'].append(data)
+				log_data = {
+				"intern_name": user['name'],
+				"type": "breakfast",
+				"done_by": active_user['name'],
+				"date":strftime("%a, %d %b %Y", gmtime())
+				}
+				db.log.insert_one(log_data)
 			else:
 				breakfast = False
 
@@ -475,6 +497,13 @@ def add_scheme(id):
 				'end_date' : end_date
 				}
 				user['scheme'].append(data)
+				logdata = {
+				"intern_name": user['name'],
+				"type": "lunch",
+				"done_by": active_user['name'],
+				"date":strftime("%a, %d %b %Y", gmtime())
+				}
+				db.log.insert_one(logdata)
 			else:
 				lunch = False
 
@@ -497,10 +526,18 @@ def add_scheme(id):
 				'end_date' : end_date
 				}
 				user['scheme'].append(data)
+				log_data = {
+				"intern_name": user['name'],
+				"type": "dinner",
+				"done_by": active_user['name'],
+				"date":strftime("%a, %d %b %Y", gmtime())
+				}
+				db.log.insert_one(log_data)
 			else:
 				dinner = False
 			db.intern.save(user)
-			return redirect('/%s'%(id))
+			db.log.insert_one(log_data)
+			return redirect('/intern/%s'%(id))
 
 
 
@@ -602,15 +639,16 @@ def edit_intern():
 def commit_edit_intern(id):
 	key = request.cookies.get('key')
 	error = None
+	email = request.cookies.get('email')
 	if db.active.find({'key'  :  key}).count() != 0:
 		user = db.active.find_one({'key'  :  key})
 		type = request.cookies.get('type')
 		#Checking if user has right to edit intern
 		if type == 'staff':
-			user = db.staff.find_one({'email'  :  user['email']})
+			user_current = db.staff.find_one({'email'  :  user['email']})
 			intern = db.intern.find_one({'_id' : ObjectId(id)})
 		if type == 'unit':
-			user = db.unit_holder.find_one({'email'  :  user['email']})
+			user_current = db.unit_holder.find_one({'email'  :  user['email']})
 			intern = db.intern.find_one({'_id' : ObjectId(id)})
 			if user['unit_name'] != intern['unit_name']:
 				return redirect('/home/unit')
@@ -674,16 +712,41 @@ def commit_edit_intern(id):
 			if phone_number != None:
 				user['phone_number'] = phone_number
 			db.intern.save(user)
+
+
+			log_data = {
+			"intern_name": intern['name'],
+			"type": "edit",
+			"done_by": user_current['name'],
+			"date":strftime("%a, %d %b %Y", gmtime())
+			}
+
+			db.log.insert_one(log_data)
 			return jsonify({'response'  : 'success'})
 
 
 
-		return render_template('edit_individual.html',user=user,intern=intern,type=type)
+		return render_template('edit_individual.html',user=user_current,intern=intern,type=type)
 	
 
 	else:
 		return redirect('/login')
 		
+@app.route('/interns/delete', methods=['GET','POST'])
+def delete_intern():
+	intern = db.intern.find_one({'_id':ObjectId(request.json['id'])})
+	log_data = {
+	"intern_name":intern['name'],
+	"type":"delete",
+	"done_by":request.json['done_by'],
+	"date":strftime("%a, %d %b %Y", gmtime())
+	}
+	db.intern.delete_one({'_id':intern['_id']})
+	db.log.insert_one(log_data)
+	response = {}
+	response['response'] = 'success'
+	response = json.dumps(response)
+	return response
 
 
 #View Transactions
@@ -700,11 +763,9 @@ def view_transactions():
 
 		if request.method == 'POST':
 
-			print 'xd'
 		
 
 			if request.json['type'] == 'money_out':
-				print 'XDDXD'
 				transactions = db.transactions.find({'type'  :  'money_out'}).sort([('_id', -1)])
 				for i in transactions:
 					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference']])
@@ -743,6 +804,32 @@ def view_transactions():
 				response = json.dumps(response)
 				return response
 
+			if request.json['type'] == 'today':
+				transactions = db.transactions.find({'date':strftime("%a, %d %b %Y", gmtime())})
+				for i in transactions:
+					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference']])
+				response = {}
+				response['response'] = results
+				response = json.dumps(response)
+				return response
+
+			if request.json['type'] == 'this_month':
+				transactions = db.transactions.find({'date':strftime("%a, %d %b %Y", gmtime())})
+				for i in transactions:
+					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference']])
+				response = {}
+				response['response'] = results
+				response = json.dumps(response)
+				return response
+
+			if request.json['type'] == 'this_quarter':
+				transactions = db.transactions.find({'date':strftime("%a, %d %b %Y", gmtime())})
+				for i in transactions:
+					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference']])
+				response = {}
+				response['response'] = results
+				response = json.dumps(response)
+				return response
 
 
 
@@ -988,7 +1075,8 @@ def approve_interns():
 			log_data = {
 			"intern_name": data['name'],
 			"type": "approve",
-			"done_by": user['name']
+			"done_by": user['name'],
+			"date":strftime("%a, %d %b %Y", gmtime())
 			}
 			db.log.insert_one(log_data)
 
@@ -1014,7 +1102,8 @@ def approve_interns():
 			log_data = {
 			"intern_name": approve_intern['name'],
 			"type": "disapprove",
-			"done_by": user['name']
+			"done_by": user['name'],
+			"date": strftime("%a, %d %b %Y", gmtime())
 			}
 			#Deleting intern
 			db.approve_intern.delete_one({'_id':ObjectId(request.json['id'])})
@@ -1026,7 +1115,17 @@ def approve_interns():
 
 	return render_template('approve_interns.html',intern=intern_list,user=user,intern_count=amount_of_interns)
 
+@app.route('/log', methods=['GET','POST'])
+def view_log():
+	email = request.cookies.get('email')
+	type_user = request.cookies.get('type')
+	user = db.staff.find_one({'email'  :  email})
+	if type_user == 'staff':
+		logs = db.log.find().sort([('_id', -1)])
+		return render_template('log.html',logs=logs,user=user)
+	else:
+		return redirect('/home/unit')
+		
 
 if __name__ == "__main__":
-	configure_uploads(app, photos)
-	app.run(debug=True)
+	app.run()

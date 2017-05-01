@@ -17,9 +17,8 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
   </head>
-  <body>
-  <nav class="navbar navbar-toggleable-md navbar-light bg-faded" style="font-family: 'Raleway', sans-serif;
-  background-color: black;">
+  <body style="font-family: 'Raleway', sans-serif;">
+  <nav class="navbar navbar-toggleable-md navbar-light bg-faded" style="background-color: black;">
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -59,10 +58,13 @@
 <br>
 
 <div class="" align="center">
-  <button  class="btn btn-md" style="background-color: white;border-color:black;color:black;" id="money_out_sort">Money Out</button>
-  <button  class="btn btn-md" style="background-color: white;border-color:black;color:black;" id="money_in_sort">Money In</button>
-  <button  class="btn btn-md" style="background-color: white;border-color:black;color:black;" id="lowest_amount">Lowest Amount</button>
-  <button  class="btn btn-md" style="background-color: white;border-color:black;color:black;" id="highest_amount">Highest Amount</button>
+  <button  class="btn btn-md" style="background-color: white;border-color:black;color:black;"  onclick="filter('money_out')">Money Out</button>
+  <button  class="btn btn-md" style="background-color: white;border-color:black;color:black;"  onclick="filter('money_in')">Money In</button>
+  <button  class="btn btn-md" style="background-color: white;border-color:black;color:black;"  onclick="filter('lowest_amount')">Lowest Amount</button>
+  <button  class="btn btn-md" style="background-color: white;border-color:black;color:black;"  onclick="filter('highest_amount')">Highest Amount</button><br><br>
+  <button  class="btn btn-md" style="background-color: white;border-color:black;color:black;"  onclick="filter('today')">Today's Transactions</button>
+  <button  class="btn btn-md" style="background-color: white;border-color:black;color:black;"  onclick="filter('this_month')">This Month's Transactions</button>
+  <button  class="btn btn-md" style="background-color: white;border-color:black;color:black;"  onclick="filter('this_quarter')">This Quarter's Transactions</button>
 </div>
 
 <br><br><br>
@@ -101,13 +103,14 @@
 
   </body>
   <script>
-$("#money_out_sort").on('click', function(){
-  $.ajax({
+
+  function filter(type){
+    $.ajax({
     type: "POST",
     contentType: "application/json; charset=utf-8",
     url: "/view_transactions",
     dataType: "json",
-    data: JSON.stringify({'type' : 'money_out'}),
+    data: JSON.stringify({'type' : type}),
     success: function (data){
 
         if (data.response.length != 0){
@@ -153,168 +156,7 @@ $("#money_out_sort").on('click', function(){
     }
 
   })
-});
-
-
-$("#money_in_sort").on('click', function(){
-  $.ajax({
-    type: "POST",
-    contentType: "application/json; charset=utf-8",
-    url: "/view_transactions",
-    dataType: "json",
-    data: JSON.stringify({'type' : 'money_in'}),
-    success: function (data){
-
-        if (data.response.length != 0){
-    
-    cell = '<table class="mdl-data-table mdl-js-data-table mdl-data-table__cell--non-numeric" align="center">'+
-  '<thead>'+
-   '<tr>'+
-    '<th class="mdl-data-table__cell--non-numeric " >Intern Name</th>'+
-     '<th class="mdl-data-table__cell--non-numeric">Amount</th>'+
-      '<th class="mdl-data-table__cell--non-numeric">Type</th>'+
-      '<th class="mdl-data-table__cell--non-numeric">Date</th>'+
-      '<th class="mdl-data-table__cell--non-numeric">Done By</th>'+
-      '<th class="mdl-data-table__cell--non-numeric">Reference</th>'+
-    '</tr>'+
-  '</thead>'+
-  '<tbody>'+
-    '<tr>';
-
-  post_data = '';
-  end_cell= '</tbody></table>'
-  
-
-    for (i = 0; i < data.response.length; i++){
-      post_data = post_data+
-          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][2]+'</td>'+
-          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][0]+'</td>'+
-          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][1]+'</td>'+
-          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][3]+'</td>'+
-          '<td class="mdl-data-table__cell--non-numerict">'+data.response[i][4]+'</td>'+
-          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][5]+'</td>'+
-        '</tr>'
-        $("#empty").empty()
-        reply = cell+post_data+end_cell
-        $("#empty").html(reply)
-        
-
-    }
-    
-
-
-
-    }
-    }
-
-  })
-});
-$("#lowest_amount").on('click', function(){
-  $.ajax({
-    type: "POST",
-    contentType: "application/json; charset=utf-8",
-    url: "/view_transactions",
-    dataType: "json",
-    data: JSON.stringify({'type' : 'lowest_amount'}),
-    success: function (data){
-
-        if (data.response.length != 0){
-    
-    cell = '<table class="mdl-data-table mdl-js-data-table mdl-data-table__cell--non-numeric" align="center">'+
-  '<thead>'+
-   '<tr>'+
-    '<th class="mdl-data-table__cell--non-numeric " >Intern Name</th>'+
-     '<th class="mdl-data-table__cell--non-numeric">Amount</th>'+
-      '<th class="mdl-data-table__cell--non-numeric">Type</th>'+
-      '<th class="mdl-data-table__cell--non-numeric">Date</th>'+
-      '<th class="mdl-data-table__cell--non-numeric">Done By</th>'+
-      '<th class="mdl-data-table__cell--non-numeric">Reference</th>'+
-    '</tr>'+
-  '</thead>'+
-  '<tbody>'+
-    '<tr>';
-
-  post_data = '';
-  end_cell= '</tbody></table>'
-  
-
-    for (i = 0; i < data.response.length; i++){
-      post_data = post_data+
-          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][2]+'</td>'+
-          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][0]+'</td>'+
-          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][1]+'</td>'+
-          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][3]+'</td>'+
-          '<td class="mdl-data-table__cell--non-numerict">'+data.response[i][4]+'</td>'+
-          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][5]+'</td>'+
-        '</tr>'
-        $("#empty").empty()
-        reply = cell+post_data+end_cell
-        $("#empty").html(reply)
-        
-
-    }
-    
-
-
-
-    }
-    }
-
-  })
-});
-$("#highest_amount").on('click', function(){
-  $.ajax({
-    type: "POST",
-    contentType: "application/json; charset=utf-8",
-    url: "/view_transactions",
-    dataType: "json",
-    data: JSON.stringify({'type' : 'highest_amount'}),
-    success: function (data){
-
-        if (data.response.length != 0){
-    
-    cell = '<table class="mdl-data-table mdl-js-data-table mdl-data-table__cell--non-numeric" align="center">'+
-  '<thead>'+
-   '<tr>'+
-    '<th class="mdl-data-table__cell--non-numeric " >Intern Name</th>'+
-     '<th class="mdl-data-table__cell--non-numeric">Amount</th>'+
-      '<th class="mdl-data-table__cell--non-numeric">Type</th>'+
-      '<th class="mdl-data-table__cell--non-numeric">Date</th>'+
-      '<th class="mdl-data-table__cell--non-numeric">Done By</th>'+
-      '<th class="mdl-data-table__cell--non-numeric">Reference</th>'+
-    '</tr>'+
-  '</thead>'+
-  '<tbody>'+
-    '<tr>';
-
-  post_data = '';
-  end_cell= '</tbody></table>'
-  
-
-    for (i = 0; i < data.response.length; i++){
-      post_data = post_data+
-          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][2]+'</td>'+
-          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][0]+'</td>'+
-          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][1]+'</td>'+
-          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][3]+'</td>'+
-          '<td class="mdl-data-table__cell--non-numerict">'+data.response[i][4]+'</td>'+
-          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][5]+'</td>'+
-        '</tr>'
-        $("#empty").empty()
-        reply = cell+post_data+end_cell
-        $("#empty").html(reply)
-        
-
-    }
-    
-
-
-
-    }
-    }
-
-  })
-});
+  }
 
 
 

@@ -5,6 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/components/label.min.css">
 
     <!-- Bootstrap CSS -->
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
@@ -15,7 +16,7 @@
      <link rel= "stylesheet" href= "{{url_for('static',filename='home_staff.css') }}">
 <script type=></script>
   </head>
-  <body>
+  <body style="font-family: 'Raleway', sans-serif;">
  <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -44,7 +45,7 @@
 
 <br><br><br><br><br>
 
-<div style="position: relative;left: 25%;"> 
+<div style="position: relative;left: 20%;"> 
 
 <!-- row one -->
   <div class="row">
@@ -102,6 +103,30 @@
 <div class="space"></div>
 
 
+<a href="/approve/interns">
+<div class="card">
+  <div class="card-block">
+  <div class="ui move reveal">
+  <div class="visible content">
+
+  {% if approve != 0 %}
+  <li class="list-group-item" style="font-size: 15px;">Interns to approve!</li>
+      {% endif %}
+       <img src="../static/icons/approve.jpg">
+   
+
+  </div>
+  <div class="hidden content">
+
+   <h3 align="center">Approve Interns</h3>
+  </div>
+</div>
+  </div>
+</div>
+</a>
+<div class="space"></div>
+
+
   </div> 
   <br><br>
 
@@ -150,6 +175,22 @@
   </div>
   <div class="hidden content">
    <h3 align="center">Money Out</h3>
+  </div>
+</div>
+  </div>
+</div>
+</a>
+<div class="space"></div>
+
+<a href="/log">
+<div class="card">
+  <div class="card-block">
+  <div class="ui move reveal">
+  <div class="visible content">
+    <img src="../static/icons/log.jpg">
+  </div>
+  <div class="hidden content">
+   <h3 align="center">Intern Log</h3>
   </div>
 </div>
   </div>

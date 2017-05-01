@@ -1,12 +1,7 @@
-
-add approve interns
-add notifications for approve interns
-add logging for:
-	create_interns
-	approve interns
-	delete interns
-
-
-change the on submit @ create intern to notify that its gonna be approved
-
 New Unit Holders and Staff have to be approved too by someone?
+Create advanced queries for transactions.
+include FAQ page where explain how to use software
+Comment app.py
+Fix redirect after post  of add_shceme
+Log add_scheme too
+Fix scheme deletion

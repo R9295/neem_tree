@@ -13,10 +13,9 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
   </head>
-  <body>
+  <body style="font-family: 'Raleway', sans-serif;">
 
-   <nav class="navbar navbar-toggleable-md navbar-light bg-faded" style="font-family: 'Raleway', sans-serif;
-  background-color: black;">
+   <nav class="navbar navbar-toggleable-md navbar-light bg-faded" style="background-color: black;">
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -46,10 +45,10 @@
 
 
 
-    <h1 align="center" style="font-family: 'Raleway', sans-serif">Add Intern</h1>
+    <h1 align="center">Add Intern</h1>
     <br><br><br><br>
 
-    <div class="container" style="font-family: 'Raleway', sans-serif">
+    <div class="container">
     <form  method="post" enctype="multipart/form-data" id="form_data" action="/add/intern/staff" class="form-control"><br>
     Name
     <input type="text"  class="form-control" name="name"        class="form-control"><br>
@@ -71,7 +70,7 @@
     <input type="file"  value="Browse"       name="img"><br><br>
     <h3 style="color:red;">{{error}}</h3>
     
-    <button id="submit" class="btn btn-md">Sumbit</button>
+    <button id="submit" class="btn btn-md" style="color:black;background-color: white;border-color: black;">Sumbit</button>
     </form>
 
 
@@ -80,7 +79,7 @@
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
     <script
         src="https://code.jquery.com/jquery-3.1.1.min.js"
-        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+
         crossorigin="anonymous"></script>
 
     

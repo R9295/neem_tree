@@ -13,8 +13,8 @@
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/components/card.min.css">
 
   </head>
-  <body>
-   <nav class="navbar navbar-toggleable-md navbar-light bg-faded" style="font-family: 'Raleway', sans-serif;background-color: black;">
+  <body style="font-family: 'Raleway', sans-serif;">
+   <nav class="navbar navbar-toggleable-md navbar-light bg-faded" style="background-color: black;">
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -42,11 +42,11 @@
 
 <br><br>
 
-    <h1 align="center" style="font-family: 'Raleway', sans-serif;">Edit {{intern.name}}</h1>
-    <h3 align="center" style="font-family: 'Raleway', sans-serif;">Enter data only in the ones you want to change, leave the rest empty.</h3>
+    <h1 align="center" >Edit {{intern.name}}</h1>
+    <h3 align="center">Enter data only in the ones you want to change, leave the rest empty.</h3>
     <br><br>
 
-    <div class="container" style="font-family: 'Raleway', sans-serif">
+    <div class="container">
 
     <h5>The current value is {{intern['name']}}</h5>
     <input type="text"  class="form-control" id="name"          placeholder="Name" class="form-control"><br><br>
@@ -67,9 +67,12 @@
 
 
     <h3 style="color:red;">{{error}}</h3>
-    <button id="submit" class="btn btn-md">Sumbit</button>
+    <button id="submit" class="btn btn-md" style="background-color: white;color: green;border-color: green;">Sumbit</button>
+    <button id="submit" class="btn btn-md" onclick="deletthis('{{intern._id}}')" style="background-color: white;color: red;border-color: red;">Delete Intern</button>
+
+
 {% if type == 'staff' %}
-    <h3 align="center" style="font-family: 'Raleway', sans-serif;">Press the red button to cancel the appropriate scheme.</h3>
+    <h3 align="center" >Press the red button to cancel the appropriate scheme.</h3>
     <br><br>
     <div class="row">
     <div align="center">
@@ -87,6 +90,34 @@
   </body>
 
   <script>
+  //delete intern
+  function deletthis(id){
+      data = {}
+    data['id'] = id;
+    data['done_by'] = "{{user['name']}}";
+    if (confirm("Are you sure you want to delete {{intern['name']}}?") == true){
+  
+
+  $.ajax({
+  type: "POST",
+  contentType: "application/json; charset=utf-8",
+  url: "/interns/delete",
+  dataType: "json",
+  data: JSON.stringify(data),
+  success: function (data) {
+    window.location = "/interns";
+  
+  }
+});
+
+  }
+  
+  else{
+    x= 'asd '
+  
+  }
+}
+
   $("#submit").on('click', function(){
   var name = $("#name").val()
   var start_date = $("#start_date").val()
