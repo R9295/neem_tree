@@ -68,7 +68,7 @@
 
     <h3 style="color:red;">{{error}}</h3>
     <button id="submit" class="btn btn-md" style="background-color: white;color: green;border-color: green;">Sumbit</button>
-    <button id="submit" class="btn btn-md" onclick="deletthis('{{intern._id}}')" style="background-color: white;color: red;border-color: red;">Delete Intern</button>
+    <button  class="btn btn-md" onclick="deletthis('{{intern._id}}')" style="background-color: white;color: red;border-color: red;">Delete Intern</button>
 
 
 {% if type == 'staff' %}
@@ -180,8 +180,11 @@
         url: "/remove/scheme",
         dataType: "json",
         data : JSON.stringify(data),
+        success: function (data){
+        window.location = "/intern/"+data.id;
+        }
+     })
 
-      })
     }
     else{
       x = "You pressed Cancel!";
@@ -198,6 +201,9 @@
         url: "/remove/scheme",
         dataType: "json",
         data : JSON.stringify(data),
+        success: function (data){
+        window.location = "/intern/"+data.id;
+        }
 
       })
     }
@@ -216,6 +222,9 @@
         url: "/remove/scheme",
         dataType: "json",
         data : JSON.stringify(data),
+        success: function (data){
+        window.location = "/intern/"+data.id;
+        }
 
       })
     }
@@ -234,6 +243,9 @@
         url: "/remove/scheme",
         dataType: "json",
         data : JSON.stringify(data),
+        success: function (data){
+        window.location = "/intern/"+data.id;
+        }
 
       })
     }

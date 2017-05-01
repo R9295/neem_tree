@@ -7,10 +7,10 @@ db.intern.delete_many({})
 
 
 #Unit Holder
-db.unit_holder.delete_many({})
+#db.unit_holder.delete_many({})
 
 #Staff
-db.staff.delete_many({})
+#db.staff.delete_many({})
 
 #Active
 db.active.delete_many({})

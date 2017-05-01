@@ -5,3 +5,7 @@ Comment app.py
 Fix redirect after post  of add_shceme
 Log add_scheme too
 Fix scheme deletion
+Super User
+Fix today,monthly and quarterly transaction filter
+
+Fix all date inputs with better date picker and reformat them

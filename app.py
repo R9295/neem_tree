@@ -402,6 +402,7 @@ def add_scheme(id):
 	key = request.cookies.get('key')
 	email = request.cookies.get('email')
 	error = None
+	callback = ''
 	log_data = {}
 	log = {}
 	logdata = {}
@@ -415,149 +416,91 @@ def add_scheme(id):
 			active_user = db.staff.find_one({'email':email})
 
 		if request.method == 'POST':
-
-
-			if request.form.get('snack'):
+			if request.form['start_date'] and request.form['end_date'] != None:
 				start_date = request.form['start_date']
-				start_year = start_date[0:4]
-				start_month = start_date[5:7]
-				start_day = start_date[8:10]
-				start_date= start_day+'/'+start_month+'/'+start_year
+				start_month = start_date[0:3]
+				start_day = start_date[3:6]
+				start_year = start_date[6:10]
+				start_date= start_day+start_month+start_year
 
 				end_date = request.form['end_date']
-				end_year = end_date[0:4]
-				end_month = end_date[5:7]
-				end_day = end_date[8:10]
-				end_date= end_day+'/'+end_month+'/'+end_year
+				end_year = end_date[6:10]
+				end_month = end_date[0:3]
+				end_day = end_date[3:6]
+				end_date= end_day+end_month+end_year
 
-				data = {
-				'type' : 'snack',
-				'start_date' : start_date,
-				'end_date' : end_date
-				}
-				user['scheme'].append(data)
-				log = {
-				"intern_name": user['name'],
-				"type": "snack",
-				"done_by": active_user['name'],
-				"date":strftime("%a, %d %b %Y", gmtime())
-				}
-				db.log.insert_one(log)
+		
+				def apply_scheme(type_of_scheme,intern_email,doneby,end_date,start_date):
+					
+					data = {
+					'type' : type_of_scheme,
+					'start_date' : start_date,
+					'end_date' : end_date
+					}
+					
+					intern = db.intern.find_one({'email':intern_email})
+					print intern['name']
+					intern['scheme'].append(data)
+					db.intern.save(intern)
+
+					log = {
+					"intern_name": intern['name'],
+					"type": type_of_scheme,
+					"done_by": doneby,
+					"date":strftime("%a, %d %b %Y", gmtime())
+					}
+					
+					db.log.insert_one(log)
+
+
+
+				if request.form['type'] == 'Snack':
+					apply_scheme('snack',user['email'],active_user['name'],end_date,start_date)
+				else:
+					snack = False
+
+				if request.form['type'] == 'Breakfast':
+					apply_scheme('breakfast',user['email'],active_user['name'],end_date,start_date)
+				else:
+					breakfast = False
+
+
+				if request.form['type'] == 'Lunch':
+					apply_scheme('lunch',user['email'],active_user['name'],end_date,start_date)
+				else:
+					lunch = False
+
+				if request.form['type'] == 'Dinner':
+					apply_scheme('dinner',user['email'],active_user['name'],end_date,start_date)
+				else:
+					dinner = False
+
+				if request.form['type'] != 'None':
+					callback = 'Added scheme successfully!'
+				else:
+					error = 'Please select a type of scheme'
 			else:
-				snack = False
-
-
-
-			if request.form.get('breakfast'):
-				start_date = request.form['start_date']
-				start_year = start_date[0:4]
-				start_month = start_date[5:7]
-				start_day = start_date[8:10]
-				start_date= start_day+'/'+start_month+'/'+start_year
-
-				end_date = request.form['end_date']
-				end_year = end_date[0:4]
-				end_month = end_date[5:7]
-				end_day = end_date[8:10]
-				end_date= end_day+'/'+end_month+'/'+end_year
-
-				data = {
-				'type' : 'breakfast',
-				'start_date' : start_date,
-				'end_date' : end_date
-				}
-				user['scheme'].append(data)
-				log_data = {
-				"intern_name": user['name'],
-				"type": "breakfast",
-				"done_by": active_user['name'],
-				"date":strftime("%a, %d %b %Y", gmtime())
-				}
-				db.log.insert_one(log_data)
-			else:
-				breakfast = False
-
-
-			if request.form.get('lunch'):
-				start_date = request.form['start_date']
-				start_year = start_date[0:4]
-				start_month = start_date[5:7]
-				start_day = start_date[8:10]
-				start_date= start_day+'/'+start_month+'/'+start_year
-
-				end_date = request.form['end_date']
-				end_year = end_date[0:4]
-				end_month = end_date[5:7]
-				end_day = end_date[8:10]
-				end_date= end_day+'/'+end_month+'/'+end_year
-
-				data = {
-				'type' : 'lunch',
-				'start_date' : start_date,
-				'end_date' : end_date
-				}
-				user['scheme'].append(data)
-				logdata = {
-				"intern_name": user['name'],
-				"type": "lunch",
-				"done_by": active_user['name'],
-				"date":strftime("%a, %d %b %Y", gmtime())
-				}
-				db.log.insert_one(logdata)
-			else:
-				lunch = False
-
-			if request.form.get('dinner'):
-				start_date = request.form['start_date']
-				start_year = start_date[0:4]
-				start_month = start_date[5:7]
-				start_day = start_date[8:10]
-				start_date= start_day+'/'+start_month+'/'+start_year
-
-				end_date = request.form['end_date']
-				end_year = end_date[0:4]
-				end_month = end_date[5:7]
-				end_day = end_date[8:10]
-				end_date= end_day+'/'+end_month+'/'+end_year
-
-				data = {
-				'type' : 'dinner',
-				'start_date' : start_date,
-				'end_date' : end_date
-				}
-				user['scheme'].append(data)
-				log_data = {
-				"intern_name": user['name'],
-				"type": "dinner",
-				"done_by": active_user['name'],
-				"date":strftime("%a, %d %b %Y", gmtime())
-				}
-				db.log.insert_one(log_data)
-			else:
-				dinner = False
-			db.intern.save(user)
-			db.log.insert_one(log_data)
-			return redirect('/intern/%s'%(id))
-
-
+				error = 'Start Date or End Date is empty!'
 
 
 			
-		return render_template('add_scheme.html', active_user=active_user,user=user )
+		return render_template('add_scheme.html', active_user=active_user,user=user,callback=callback,error=error)
 
 
 @app.route('/remove/scheme', methods=['GET','POST'])
 def remove_scheme():
-	interns = db.intern.find_one({'name' : request.json['intern_name']})
+	intern = db.intern.find_one({'name' : request.json['intern_name']})
 	type = request.json['type']
+	print type
 	for i in intern['scheme']:
 		if i['type'] == type:
 			index = intern['scheme'].index(i)
-			print index
 			intern['scheme'].pop(index)
-			
-		db.intern.save(interns)
-	return redirect('/%s'%(intern['_id']))
+			db.intern.save(intern)
+	response = {}
+	response['id'] = '%s'%(intern['_id'])
+	response = json.dumps(response)
+	return response
 
 #Intern List 
 @app.route('/interns')
@@ -641,8 +584,12 @@ def commit_edit_intern(id):
 	error = None
 	email = request.cookies.get('email')
 	if db.active.find({'key'  :  key}).count() != 0:
+		
+
 		user = db.active.find_one({'key'  :  key})
 		type = request.cookies.get('type')
+
+
 		#Checking if user has right to edit intern
 		if type == 'staff':
 			user_current = db.staff.find_one({'email'  :  user['email']})
@@ -659,6 +606,7 @@ def commit_edit_intern(id):
 			end_date = None
 			email = None
 			phone_number = None
+			
 			try:
 				name = request.json['name']
 			except KeyError:
@@ -670,10 +618,9 @@ def commit_edit_intern(id):
 				start_month = start_date[5:7]
 				start_day = start_date[8:10]
 				start_date= start_day+'/'+start_month+'/'+start_year
-
 			except KeyError:
 				pass
-				
+
 			try:
 				end_date = request.json['end_date']
 				end_date = request.form['end_date']
@@ -1128,4 +1075,5 @@ def view_log():
 		
 
 if __name__ == "__main__":
-	app.run()
+	configure_uploads(app, photos)
+	app.run(debug=True)
