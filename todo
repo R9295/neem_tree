@@ -2,9 +2,7 @@ New Unit Holders and Staff have to be approved too by someone?
 Create advanced queries for transactions.
 include FAQ page where explain how to use software
 Comment app.py
-Fix redirect after post  of add_shceme
-Log add_scheme too
-Fix scheme deletion
+Fix money in and out callbacks(input empty)
 Super User
 Fix today,monthly and quarterly transaction filter
 

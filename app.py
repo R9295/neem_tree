@@ -1069,9 +1069,10 @@ def view_log():
 	user = db.staff.find_one({'email'  :  email})
 	if type_user == 'staff':
 		logs = db.log.find().sort([('_id', -1)])
-		return render_template('log.html',logs=logs,user=user)
+
 	else:
 		return redirect('/home/unit')
+	return render_template('log.html', logs=logs, user=user)
 		
 
 if __name__ == "__main__":
