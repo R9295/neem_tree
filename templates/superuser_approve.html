@@ -65,7 +65,7 @@
       </div>
 <br>
 <br>
-      <div class="ui red ribbon label" onclick="disapprove('')">
+      <div class="ui red ribbon label" onclick="disapprove('{{i._id}}')">
         Dispprove
       </div>
       </div>
@@ -109,7 +109,7 @@ $.ajax({
   dataType: "json",
   data: JSON.stringify({'id': id, 'type':'disapprove'}),
   success: function (data) {
-  window.location.href ="/approve/interns"
+   $("#callback").text('Successfully disapproved!')
 
 
     }

@@ -1192,6 +1192,15 @@ def superuser_approve_staff():
 		response = {}
 		response['response'] = 'success'
 		response = json.dumps(response)
+		return response
+
+
+	if request.method == 'POST' and request.json['type'] == 'disapprove':
+		unit = db.approve_staff.find_one({'_id':ObjectId(request.json['id'])})
+		db.approve_staff.delete_one({'_id':ObjectId(request.json['id'])})
+		response = {}
+		response['response'] = 'success'
+		response = json.dumps(response)
 		return response  
 
 	return render_template('superuser_approve.html',type=type,to_approve=to_approve,type_url=type_url)
@@ -1219,7 +1228,15 @@ def superuser_approve_unit():
 		response = {}
 		response['response'] = 'success'
 		response = json.dumps(response)
-		return response 
+		return response
+
+	if request.method == 'POST' and request.json['type'] == 'disapprove':
+		unit = db.approve_unit_holder.find_one({'_id':ObjectId(request.json['id'])})
+		db.approve_unit_holder.delete_one({'_id':ObjectId(request.json['id'])})
+		response = {}
+		response['response'] = 'success'
+		response = json.dumps(response)
+		return response
 	return render_template('superuser_approve.html',type=type,type_url=type_url,to_approve=to_approve)
 
 
