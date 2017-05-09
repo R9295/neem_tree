@@ -975,6 +975,7 @@ def logout():
     	resp.set_cookie('key','',expires=0)
     	resp.set_cookie('email','',expires=0)
     	resp.set_cookie('type','',expires=0)
+    	resp.set_cookie('superuser','',expires=0)
     	return resp
 
 @app.route('/approve/interns', methods=['GET','POST'])
