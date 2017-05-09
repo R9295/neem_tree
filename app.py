@@ -12,7 +12,7 @@ from time import gmtime,strftime
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from datetime import *
 import datetime
-
+from bson.json_util import dumps
 
 
 #Connecting to DB
@@ -715,7 +715,7 @@ def view_transactions():
 			if request.json['type'] == 'money_out':
 				transactions = db.transactions.find({'type'  :  'money_out'}).sort([('_id', -1)])
 				for i in transactions:
-					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference']])
+					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference'],str(i['_id'])])
 				response = {}
 				response['response'] = results
 				response = json.dumps(response)
@@ -725,7 +725,7 @@ def view_transactions():
 			if request.json['type'] == 'money_in':
 				transactions = db.transactions.find({'type'  :  'money_in'}).sort([('_id', -1)])
 				for i in transactions:
-					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference']])
+					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference'],str(i['_id'])])
 				response = {}
 				response['response'] = results
 				response = json.dumps(response)
@@ -735,7 +735,7 @@ def view_transactions():
 			if request.json['type'] == 'lowest_amount':
 				transactions = db.transactions.find().sort([('amount', +1)])
 				for i in transactions:
-					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference']])
+					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference'],str(i['_id'])])
 				response = {}
 				response['response'] = results
 				response = json.dumps(response)
@@ -745,7 +745,7 @@ def view_transactions():
 			if request.json['type'] == 'highest_amount':
 				transactions = db.transactions.find().sort([('amount', -1)])
 				for i in transactions:
-					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference']])
+					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference'],str(i['_id'])])
 				response = {}
 				response['response'] = results
 				response = json.dumps(response)
@@ -754,7 +754,7 @@ def view_transactions():
 			if request.json['type'] == 'today':
 				transactions = db.transactions.find({'date':strftime("%a, %d %b %Y", gmtime())})
 				for i in transactions:
-					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference']])
+					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference'],str(i['_id'])])
 				response = {}
 				response['response'] = results
 				response = json.dumps(response)
@@ -763,7 +763,7 @@ def view_transactions():
 			if request.json['type'] == 'this_month':
 				transactions = db.transactions.find({'date':strftime("%a, %d %b %Y", gmtime())})
 				for i in transactions:
-					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference']])
+					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference'],str(i['_id'])])
 				response = {}
 				response['response'] = results
 				response = json.dumps(response)
@@ -772,7 +772,7 @@ def view_transactions():
 			if request.json['type'] == 'this_quarter':
 				transactions = db.transactions.find({'date':strftime("%a, %d %b %Y", gmtime())})
 				for i in transactions:
-					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference']])
+					results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference'],str(i['_id'])])
 				response = {}
 				response['response'] = results
 				response = json.dumps(response)
@@ -797,13 +797,25 @@ def search_transaction():
 	error = None
 	usr = db.active.find_one({'key' : key})
 	if db.active.find({'key' : key}).count() != 0 and usr['type'] == 'staff':
-		transactions = db.transactions.find({'intern_name' :{'$regex' : query} }).sort([('_id', -1)])
-		for i in transactions:
-			results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference']])
-		response = {}
-		response['response'] = results
-		response = json.dumps(response)
-		return response
+		if request.method == 'POST' and request.json['type'] == 'intern':
+			transactions = db.transactions.find({'intern_name' :{'$regex' : query} }).sort([('_id', -1)])
+			for i in transactions:
+				results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference'],str(i['_id'])])
+			response = {}
+			response['response'] = results
+			response = json.dumps(response)
+			return response
+		
+		if request.method == 'POST' and request.json['type'] == 'staff':
+			transactions = db.transactions.find({'done_by' :{'$regex' : query} }).sort([('_id', -1)])
+			for i in transactions:
+				results.append([i['amount'],i['type'],i['intern_name'],i['date'],i['done_by'],i['reference'],str(i['_id'])])
+			response = {}
+			response['response'] = results
+			response = json.dumps(response)
+			return response
+
+
 	else:
 		return redirect('/login')
 
@@ -1066,46 +1078,68 @@ def approve_interns():
 
 @app.route('/backtrack', methods=['GET','POST'])
 def backtrack():
-	email = request.cookies.get(email)
+	email = request.cookies.get('email')
 	user = db.staff.find({'email':email}).count()
 	if user != 0:
 		user = db.staff.find_one({'email':email})
-		data = {
-		'type':request.json['type'],
-		'amount':request.json['amount'],
-		'intern_name':request.json['intern_name']
-		}
-		
-		intern = db.intern.find_one({'name':data['intern_name']})
-		if data['type'] == 'money_in':
-			intern['balance'] = intern['balance']+int(data['amount'])
-			db.intern.save(intern)
+		data = request.json['id']
+		transaction = db.transactions.find({'_id':ObjectId(data)}).count()
+
+		if transaction != 1:
+			response = {}
+			response['response'] = 'incorrect_id'
+			response = json.dumps(response)
+			return response
+
+		if transaction == 1:
+			transaction = db.transactions.find_one({'_id':ObjectId(data)})
+			intern = db.intern.find_one({'name':transaction['intern_name']})
 
 
-		if data['type'] == 'money_out':
-			if intern['balance'] < int(data['amount']):
-				response = {}
-				response['response'] = 'not_enough_balance'
-				response = json.dumps(response)
-				return response
-			
-			else:
-				intern['balance'] = intern['balance']-int(data['amount'])
-				data={
-					"date":strftime("%a, %d %b %Y", gmtime()),
-					"intern_name":data['intern_name'],
-					"amount":int(data['amount']),
-					"reference":'undo_transaction',
-					"type": "money_out",
-					"done_by": user['name']
-					}
-				db.transactions.insert_one(data)
-				response = {}
-				response['response'] = 'success'
-				response = json.dumps(response)
-				return response
-	else:
-		return 'GTFO'
+			if transaction['type'] == 'money_in':
+				#Check if there is enough money to reverse
+				if intern['balance'] < int(transaction['amount']):
+					response = {}
+					response['response'] = 'not_enough_balance'
+					response = json.dumps(response)
+					return response
+
+				else:
+					intern['balance'] = intern['balance']-int(transaction['amount'])
+					db.intern.save(intern)
+					data={
+							"date":strftime("%a, %d %b %Y", gmtime()),
+							"intern_name":transaction['intern_name'],
+							"amount":int(transaction['amount']),
+							"reference":'undo_transaction',
+							"type": "money_out",
+							"done_by": user['name']
+							}
+					db.transactions.insert_one(data)
+					response = {}
+					response['response'] = 'success'
+					response = json.dumps(response)
+					return response
+
+
+			if transaction['type'] == 'money_out':
+					intern['balance'] = intern['balance']+int(transaction['amount'])
+					db.intern.save(intern)
+					data={
+						"date":strftime("%a, %d %b %Y", gmtime()),
+						"intern_name":transaction['intern_name'],
+						"amount":int(transaction['amount']),
+						"reference":'undo_transaction',
+						"type": "money_in",
+						"done_by": user['name']
+						}
+					db.transactions.insert_one(data)
+					response = {}
+					response['response'] = 'success'
+					response = json.dumps(response)
+					return response
+		else:
+			return 'GTFO'
 
 @app.route('/log', methods=['GET','POST'])
 def view_log():

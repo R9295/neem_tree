@@ -53,9 +53,23 @@
 
   <!--for demo wrap-->
   <h1 align="center">Transactions</h1>
-<br><Br><Br>
-<div align="center"><input type="text" id="search" class="form-control col-lg-3" placeholder="Search By Intern Name"></div>
 <br>
+<div align="center">
+<input type="text" id="search" class="form-control col-lg-3" placeholder="Search By Intern Name">
+
+<input type="text" id="search_staff" class="form-control col-lg-3" placeholder="Search By Staff Name">
+</div>
+<br>
+
+<div align="left">
+  Enter the ID of the transaction you wish to undo
+  <input type="text" class="form-control col-lg-2 " id="id_for_delete"><br>
+  <button  class="btn btn-md" style="background-color: white;border-color:black;color:black;" onclick="backtrack()">Undo</button>
+  <div id="callback" style="color:red;font-size: 25px"></div>
+<div id="callback_success" style="color:green;font-size: 25px"></div>
+</div>
+
+
 
 <div class="" align="center">
   <button  class="btn btn-md" style="background-color: white;border-color:black;color:black;"  onclick="filter('money_out')">Money Out</button>
@@ -67,24 +81,16 @@
   <button  class="btn btn-md" style="background-color: white;border-color:black;color:black;"  onclick="filter('this_quarter')">This Quarter's Transactions</button>
 
 </div>
- <div class="dropdown">
-  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Dropdown button
-  </button>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-    <a class="dropdown-item" href="#">Action</a>
-    <a class="dropdown-item" href="#">Another action</a>
-    <a class="dropdown-item" href="#">Something else here</a>
-  </div>
-</div>
+
+
 <br><br><br>
 
-<div id="callback" style="color:red;font-size: 25px"></div>
-<div id="callback_success" style="color:green;font-size: 25px"></div>
+
 <div id="empty">
 <table class="mdl-data-table mdl-js-data-table mdl-data-table__cell--non-numeric" align="center" data->
   <thead>
     <tr>
+      <th class="mdl-data-table__cell--non-numeric">ID</th>
       <th class="mdl-data-table__cell--non-numeric">Intern Name</th>
       <th class="mdl-data-table__cell--non-numeric">Amount</th>
       <th class="mdl-data-table__cell--non-numeric">Type</th>
@@ -96,6 +102,7 @@
   <tbody>
   {% for i in transactions %}
     <tr onclick="backtrack('{{i.intern_name}}','{{i.amount}}','{{i.type}}')" class="hover">
+      <td class="mdl-data-table__cell--non-numeric ">{{i['_id']}}</td>
       <td class="mdl-data-table__cell--non-numeric ">{{i['intern_name']}}</td>
       <td class="mdl-data-table__cell--non-numeric ">{{i['amount']}}</td>
       <td class="mdl-data-table__cell--non-numeric ">{{i['type']}}</td>
@@ -120,9 +127,7 @@
   function backtrack(name,amount,type){
    if(confirm('Are you sure you want to undo this transaction?') == true){
     data = {}
-    data['intern_name'] = name
-    data['amount'] = amount
-    data['type'] = type
+    data['id'] = $("#id_for_delete").val()
         $.ajax({
     type: "POST",
     contentType: "application/json; charset=utf-8",
@@ -138,6 +143,10 @@ if (data.response == 'not_enough_balance'){
         $("#callback").text('Not enough Balance to undo')
       }
 
+      if (data.response == 'incorrect_id'){
+        $("#callback").text('Incorrect ID')
+      }
+
     }
 
   })
@@ -148,9 +157,6 @@ if (data.response == 'not_enough_balance'){
    }
   }
 
-  function asd(info){
-    console.log(info)
-  }
 
   function filter(type){
     $.ajax({
@@ -166,6 +172,7 @@ if (data.response == 'not_enough_balance'){
     cell = '<table class="mdl-data-table mdl-js-data-table mdl-data-table__cell--non-numeric" align="center" >'+
   '<thead>'+
    '<tr>'+
+    '<th class="mdl-data-table__cell--non-numeric " >ID</th>'+
     '<th class="mdl-data-table__cell--non-numeric " >Intern Name</th>'+
      '<th class="mdl-data-table__cell--non-numeric">Amount</th>'+
       '<th class="mdl-data-table__cell--non-numeric">Type</th>'+
@@ -182,7 +189,8 @@ if (data.response == 'not_enough_balance'){
     for (i = 0; i < data.response.length; i++){
 
       post_data =
-       post_data+"<tr class='hover' onclick="'asd('+data.response[2]+')'">"+
+       post_data+"<tr class='hover'>"+
+          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][6]+'</td>'+
           '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][2]+'</td>'+
           '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][0]+'</td>'+
           '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][1]+'</td>'+
@@ -218,7 +226,7 @@ $.ajax({
   contentType: "application/json; charset=utf-8",
   url: "/search/transactions",
   dataType: "json",
-  data: JSON.stringify({'query': search_term}),
+  data: JSON.stringify({'query': search_term,'type':'intern'}),
   success: function (data) {
 
 
@@ -228,6 +236,7 @@ $.ajax({
     cell = '<table class="mdl-data-table mdl-js-data-table mdl-data-table__cell--non-numeric" align="center">'+
   '<thead>'+
    '<tr>'+
+    '<th class="mdl-data-table__cell--non-numeric " >ID </th>'+
     '<th class="mdl-data-table__cell--non-numeric " >Intern Name</th>'+
      '<th class="mdl-data-table__cell--non-numeric">Amount</th>'+
       '<th class="mdl-data-table__cell--non-numeric">Type</th>'+
@@ -245,6 +254,7 @@ $.ajax({
 
     for (i = 0; i < data.response.length; i++){
       post_data = post_data+
+          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][6]+'</td>'+
           '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][2]+'</td>'+
           '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][0]+'</td>'+
           '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][1]+'</td>'+
@@ -270,5 +280,72 @@ $.ajax({
 
 }
 });
+
+$("#search_staff").keyup(function(){
+      var search_term = $(this).val();
+
+    if(search_term != ''){
+
+$.ajax({
+  type: "POST",
+  contentType: "application/json; charset=utf-8",
+  url: "/search/transactions",
+  dataType: "json",
+  data: JSON.stringify({'query': search_term,'type':'staff'}),
+  success: function (data) {
+
+
+   if (data.response.length != 0){
+    //console.log(data.response[0])
+    
+    cell = '<table class="mdl-data-table mdl-js-data-table mdl-data-table__cell--non-numeric" align="center">'+
+  '<thead>'+
+   '<tr>'+
+    '<th class="mdl-data-table__cell--non-numeric " >ID</th>'+
+    '<th class="mdl-data-table__cell--non-numeric " >Intern Name</th>'+
+     '<th class="mdl-data-table__cell--non-numeric">Amount</th>'+
+      '<th class="mdl-data-table__cell--non-numeric">Type</th>'+
+      '<th class="mdl-data-table__cell--non-numeric">Date</th>'+
+      '<th class="mdl-data-table__cell--non-numeric">Done By</th>'+
+      '<th class="mdl-data-table__cell--non-numeric">Reference</th>'+
+    '</tr>'+
+  '</thead>'+
+  '<tbody>'+
+    '<tr>';
+
+  post_data = '';
+  end_cell= '</tbody></table>'
+  
+
+    for (i = 0; i < data.response.length; i++){
+      post_data = post_data+
+          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][6]+'</td>'+
+          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][2]+'</td>'+
+          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][0]+'</td>'+
+          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][1]+'</td>'+
+          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][3]+'</td>'+
+          '<td class="mdl-data-table__cell--non-numerict">'+data.response[i][4]+'</td>'+
+          '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][5]+'</td>'+
+        '</tr>'
+        $("#empty").empty()
+        reply = cell+post_data+end_cell
+        $("#empty").html(reply)
+        
+
+    }
+    
+
+
+
+    }
+
+  }
+
+});
+
+}
+});
+
+
 </script>
 </html>
