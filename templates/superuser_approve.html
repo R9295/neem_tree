@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/components/label.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel= "stylesheet" href= "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/components/card.min.css">
+    <title>Approve {{type}}</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  </head>
+
+
+  <body style="font-family: 'Raleway', sans-serif;">
+
+
+  <nav class="navbar navbar-toggleable-md navbar-light bg-faded" style="background-color: black;">
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" href="#" style="color:red;font-size:1.2vw;">NEEM TREE</a>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/home/unit" style="color:red;font-size:1vw;">Home <span class="sr-only">(current)</span></a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="dropdown" style="background-color: transparent;font-size: 1vw;color:red;">
+  <a class="btn dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 1vw;color:red;">
+    superuser 
+  </a>
+
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+    <a class="dropdown-item" href="#">Settings</a>
+    <a class="dropdown-item" href="/logout">Logout</a>
+  </div>
+</div>
+  </nav>
+
+
+   <div class="container">
+       <h1 align="center">Approve {{type}}</h1>
+       <div id="callback" style="color:green;font-size: 25px;"></div>
+       <br><br><br>
+   <div class="row">
+    {% for i in to_approve %}
+    <div class="ui card" id="intern">
+
+  <div class="content">
+    <a class="header" href="#">{{i.name}}</a>
+    <div class="description">
+
+      Type : {{type}} <br> 
+      {% if type_url == 'unit' %}
+      Unit Name : {{i.unit_name}} <br>
+      {% endif %}
+    <div class="ui green ribbon label" onclick="approve('{{i._id}}')">
+        Approve
+      </div>
+<br>
+<br>
+      <div class="ui red ribbon label" onclick="disapprove('')">
+        Dispprove
+      </div>
+      </div>
+  </div>
+  </div> 
+  <div style="padding-right: 20px;"></div>
+    {% endfor %}
+</div>
+</div>
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"  crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script>
+      function approve(id){
+
+$.ajax({
+  type: "POST",
+  contentType: "application/json; charset=utf-8",
+  url: "/approve/superuser/{{type_url}}",
+  dataType: "json",
+  data: JSON.stringify({'id': id, 'type':'approve'}),
+  success: function (data) {
+  $("#callback").text('Successfully appproved!')
+
+
+    }
+
+  });
+       
+      }
+
+
+  function disapprove(id){
+
+    var id = id;
+$.ajax({
+  type: "POST",
+  contentType: "application/json; charset=utf-8",
+  url: "/approve/superuser/{{type_url}}",
+  dataType: "json",
+  data: JSON.stringify({'id': id, 'type':'disapprove'}),
+  success: function (data) {
+  window.location.href ="/approve/interns"
+
+
+    }
+
+  });
+   }
+
+
+
+    </script>
+  </body>
+</html>

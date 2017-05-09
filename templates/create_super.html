@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <title>Code</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="container" style="font-family: 'Raleway', sans-serif;">
+    <h1 class="raleway" align="center">Create Super User code</h1>
+    <br><br><br><br>
+    <form class="form-control" method="post">
+    Enter Password
+    <input type="password" name="code" class="form-control" id="code">
+    Enter Password Again
+    <input type="password" name="code_two" class="form-control" id="code_two">
+    <div style="color:red;font-size: 25px;" id="error"></div><br><br>
+    <div style="color:green;font-size:25px;" id="callback">{{callback}}</div><br><br>
+    <button class="btn btn-md " style="color:black;background-color: white;border-color: black;" id="submit">Submit</button>
+      
+    </form>
+    </div>
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script>
+
+
+      $("#code_two").on('keyup', function(){
+        var code = $("#code").val()
+        var code_two = $("#code_two").val()
+
+        if (code != code_two){
+          $("#error").text("Passwords don't match");
+          $("#submit").prop('disabled', true);
+        }
+         else{
+          $("#error").text("");
+          $("#submit").prop('disabled', false);
+        }
+      })
+
+
+    </script>
+  </body>
+</html>

@@ -1,5 +1,8 @@
 @import url(http://fonts.googleapis.com/css?family=Roboto:400,500,700,300,100);
 
+
+
+
 body {
   background-color: #ebebeb;
   font-family: "Roboto", helvetica, arial, sans-serif;
@@ -100,4 +103,7 @@ td.text-center {
 
 td.text-right {
   text-align: right;
+}
+.hover:hover{
+  color:red;
 }

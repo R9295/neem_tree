@@ -65,9 +65,22 @@
   <button  class="btn btn-md" style="background-color: white;border-color:black;color:black;"  onclick="filter('today')">Today's Transactions</button>
   <button  class="btn btn-md" style="background-color: white;border-color:black;color:black;"  onclick="filter('this_month')">This Month's Transactions</button>
   <button  class="btn btn-md" style="background-color: white;border-color:black;color:black;"  onclick="filter('this_quarter')">This Quarter's Transactions</button>
-</div>
 
+</div>
+ <div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Dropdown button
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <a class="dropdown-item" href="#">Action</a>
+    <a class="dropdown-item" href="#">Another action</a>
+    <a class="dropdown-item" href="#">Something else here</a>
+  </div>
+</div>
 <br><br><br>
+
+<div id="callback" style="color:red;font-size: 25px"></div>
+<div id="callback_success" style="color:green;font-size: 25px"></div>
 <div id="empty">
 <table class="mdl-data-table mdl-js-data-table mdl-data-table__cell--non-numeric" align="center" data->
   <thead>
@@ -82,13 +95,13 @@
   </thead>
   <tbody>
   {% for i in transactions %}
-    <tr>
-      <td class="mdl-data-table__cell--non-numeric">{{i['intern_name']}}</td>
-      <td class="mdl-data-table__cell--non-numeric">{{i['amount']}}</td>
-      <td class="mdl-data-table__cell--non-numeric">{{i['type']}}</td>
-      <td class="mdl-data-table__cell--non-numeric">{{i['date']}}</td>
-      <td class="mdl-data-table__cell--non-numeric">{{i['done_by']}}</td>
-      <td class="mdl-data-table__cell--non-numeric">{{i['reference']}}</td>
+    <tr onclick="backtrack('{{i.intern_name}}','{{i.amount}}','{{i.type}}')" class="hover">
+      <td class="mdl-data-table__cell--non-numeric ">{{i['intern_name']}}</td>
+      <td class="mdl-data-table__cell--non-numeric ">{{i['amount']}}</td>
+      <td class="mdl-data-table__cell--non-numeric ">{{i['type']}}</td>
+      <td class="mdl-data-table__cell--non-numeric ">{{i['date']}}</td>
+      <td class="mdl-data-table__cell--non-numeric ">{{i['done_by']}}</td>
+      <td class="mdl-data-table__cell--non-numeric ">{{i['reference']}}</td>
     </tr>
    {% endfor %}
   </tbody>
@@ -104,6 +117,41 @@
   </body>
   <script>
 
+  function backtrack(name,amount,type){
+   if(confirm('Are you sure you want to undo this transaction?') == true){
+    data = {}
+    data['intern_name'] = name
+    data['amount'] = amount
+    data['type'] = type
+        $.ajax({
+    type: "POST",
+    contentType: "application/json; charset=utf-8",
+    url: "/backtrack",
+    dataType: "json",
+    data: JSON.stringify(data),
+    success: function (data){
+
+      if (data.response == 'success'){
+        $("#callback_success").text('Successfully managed to undo transaction')
+      }
+if (data.response == 'not_enough_balance'){
+        $("#callback").text('Not enough Balance to undo')
+      }
+
+    }
+
+  })
+
+   }
+   else{
+    x = 'asd'
+   }
+  }
+
+  function asd(info){
+    console.log(info)
+  }
+
   function filter(type){
     $.ajax({
     type: "POST",
@@ -115,7 +163,7 @@
 
         if (data.response.length != 0){
     
-    cell = '<table class="mdl-data-table mdl-js-data-table mdl-data-table__cell--non-numeric" align="center">'+
+    cell = '<table class="mdl-data-table mdl-js-data-table mdl-data-table__cell--non-numeric" align="center" >'+
   '<thead>'+
    '<tr>'+
     '<th class="mdl-data-table__cell--non-numeric " >Intern Name</th>'+
@@ -126,15 +174,15 @@
       '<th class="mdl-data-table__cell--non-numeric">Reference</th>'+
     '</tr>'+
   '</thead>'+
-  '<tbody>'+
-    '<tr>';
+  '<tbody>';
 
   post_data = '';
   end_cell= '</tbody></table>'
-  
 
     for (i = 0; i < data.response.length; i++){
-      post_data = post_data+
+
+      post_data =
+       post_data+"<tr class='hover' onclick="'asd('+data.response[2]+')'">"+
           '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][2]+'</td>'+
           '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][0]+'</td>'+
           '<td class="mdl-data-table__cell--non-numeric">'+data.response[i][1]+'</td>'+

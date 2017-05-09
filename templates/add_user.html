@@ -155,7 +155,7 @@
 
 
     if (data.response == 'success'){
-    $("#callback_unit").html('<h3 style="color:green !important;">Success<h3>'+'<a href="/login"><button class="btn btn-md" style="color:green;background-color:white ;border-color:green;">Login</button></a><br><br>');
+    $("#callback_unit").html('<h3 style="color:green !important;">You are waiting to be approved by the Superuser!<h3><br>');
   }  
     if (data.response == 'failure'){
     $("#callback_unit").html("<h3 style='color:red !important;'>Can't insert in Database<h3>");
@@ -212,7 +212,7 @@
 
 
     if (data.response == 'success'){
-    $("#callback_staff").html('<h3 style="color:green !important;">Success<h3>'+'<a href="/login"><button class="btn btn-md" style="color:green;background-color:white ;border-color:green;">Login</button></a><br><br>');
+    $("#callback_staff").html('<h3 style="color:green !important;">You are waiting to be approved by the Superuser!<h3><br>');
   }  
     if (data.response == 'failure'){
     $("#callback_staff").html("<h3 style='color:red !important;'>Can't insert in Database<h3>");

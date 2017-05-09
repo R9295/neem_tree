@@ -23,3 +23,6 @@ db.log.delete_many({})
 
 #approve interns 
 db.approve_intern.delete_many({})
+
+#code 
+db.code.delete_many({})

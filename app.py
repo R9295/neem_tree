@@ -195,7 +195,7 @@ def add_staff():
 		}
 
 		try:
-			db.staff.insert_one(data)
+			db.approve_staff.insert_one(data)
 			response = {}
 			response['response'] = "success"
 			response = json.dumps(response)
@@ -227,7 +227,7 @@ def add_unit_holder():
 		"phone_number":request.json['phone_number'],
 		}
 		try:
-			db.unit_holder.insert_one(data)
+			db.approve_unit_holder.insert_one(data)
 			response = {}
 			response['response'] = "success"
 			response = json.dumps(response)
@@ -1062,6 +1062,50 @@ def approve_interns():
 
 	return render_template('approve_interns.html',intern=intern_list,user=user,intern_count=amount_of_interns)
 
+
+@app.route('/backtrack', methods=['GET','POST'])
+def backtrack():
+	email = request.cookies.get(email)
+	user = db.staff.find({'email':email}).count()
+	if user != 0:
+		user = db.staff.find_one({'email':email})
+		data = {
+		'type':request.json['type'],
+		'amount':request.json['amount'],
+		'intern_name':request.json['intern_name']
+		}
+		
+		intern = db.intern.find_one({'name':data['intern_name']})
+		if data['type'] == 'money_in':
+			intern['balance'] = intern['balance']+int(data['amount'])
+			db.intern.save(intern)
+
+
+		if data['type'] == 'money_out':
+			if intern['balance'] < int(data['amount']):
+				response = {}
+				response['response'] = 'not_enough_balance'
+				response = json.dumps(response)
+				return response
+			
+			else:
+				intern['balance'] = intern['balance']-int(data['amount'])
+				data={
+					"date":strftime("%a, %d %b %Y", gmtime()),
+					"intern_name":data['intern_name'],
+					"amount":int(data['amount']),
+					"reference":'undo_transaction',
+					"type": "money_out",
+					"done_by": user['name']
+					}
+				db.transactions.insert_one(data)
+				response = {}
+				response['response'] = 'success'
+				response = json.dumps(response)
+				return response
+	else:
+		return 'GTFO'
+
 @app.route('/log', methods=['GET','POST'])
 def view_log():
 	email = request.cookies.get('email')
@@ -1074,6 +1118,110 @@ def view_log():
 		return redirect('/home/unit')
 	return render_template('log.html', logs=logs, user=user)
 		
+
+@app.route('/superuser', methods=['GET','POST'])
+def super_user():
+	code = db.code.find().count()
+	if code == 0:
+		return redirect('/create_super')
+	else:
+		if request.method == 'POST':
+			code = request.json['code']
+			super_user_code = db.code.find_one()
+			try:
+				response = {}
+				ph.verify(super_user_code['code'],code)
+				active_user = {
+				'code': key_gen()
+				}
+				response['response'] = 'success'
+				response['code'] = active_user['code']
+				db.active.insert_one(active_user)
+
+				response = json.dumps(response)
+				return response
+			except:
+				response = {}
+				response['response'] = 'failure'
+				response = json.dumps(response)
+				return response  
+	return render_template('login_super.html')
+
+@app.route('/create_super', methods=["GET","POST"])
+def create_super():
+	callback = ''
+	code = db.code.find().count()
+	if code != 0:
+		return redirect('/superuser')
+	else:
+		if request.method == 'POST':
+			data = {
+			'code' : ph.hash(request.form['code'])
+			}
+			db.code.insert_one(data)
+			callback = 'Successfully created the superuser code'
+	return render_template('create_super.html',callback=callback)
+
+@app.route('/home/superuser', methods=['GET','POST'])
+def home_superuser():
+	staff_to_approve = db.approve_staff.find().count()
+	unit_holders_to_approve = db.approve_unit_holder.find().count()
+	all_staff = db.staff.find()
+	all_units = db.unit_holder.find()
+	return render_template('super_user.html',staff=staff_to_approve,unit_holder=unit_holders_to_approve)
+
+@app.route('/approve/superuser/staff', methods=['GET','POST'])
+def superuser_approve_staff():
+	type = 'Staff'
+	type_url = 'staff'
+	to_approve = db.approve_staff.find()
+	if request.method == 'POST' and request.json['type'] == 'approve':
+		#finding the staff
+		staff = db.approve_staff.find_one({'_id':ObjectId(request.json['id'])})
+
+		#setting data
+		data ={
+		"name":staff['name'],
+		"password": staff['password'],
+		"email":staff['email'],
+		"phone_number":staff['phone_number']
+		}
+
+		db.staff.insert_one(data)
+		db.approve_staff.delete_one({'_id':ObjectId(request.json['id'])})
+		response = {}
+		response['response'] = 'success'
+		response = json.dumps(response)
+		return response  
+
+	return render_template('superuser_approve.html',type=type,to_approve=to_approve,type_url=type_url)
+
+@app.route('/approve/superuser/unit', methods=['GET','POST'])
+def superuser_approve_unit():
+	type = 'Unit Holders'
+	type_url = 'unit'
+	to_approve = db.approve_unit_holder.find()
+	if request.method == 'POST' and request.json['type'] == 'approve':
+		#finding the staff
+		unit = db.approve_unit_holder.find_one({'_id':ObjectId(request.json['id'])})
+
+		#setting data
+		data ={
+		"unit_name":unit['unit_name'],
+		"name":unit['name'],
+		"password": unit['password'],
+		"email":unit['email'],
+		"phone_number":unit['phone_number']
+		}
+
+		db.unit_holder.insert_one(data)
+		db.approve_unit_holder.delete_one({'_id':ObjectId(request.json['id'])})
+		response = {}
+		response['response'] = 'success'
+		response = json.dumps(response)
+		return response 
+	return render_template('superuser_approve.html',type=type,type_url=type_url,to_approve=to_approve)
+
 
 if __name__ == "__main__":
 	configure_uploads(app, photos)

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  </head>
+  <body>
+  <div class="container">
+   
+    Enter Password
+    <input type="password" name="code" class="form-control" id="code">
+    <div style="color:red;font-size: 25px;" id="error"></div><br><br>
+    <button class="btn btn-md " style="color:black;background-color: white;border-color: black;" id="submit">Submit</button>
+      
+    
+</div>
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.4/js.cookie.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.3/js.cookie.min.js"></script>
+    <script>
+
+      
+      
+          $("#submit").on('click', function(){
+
+
+          $.ajax({
+          type: "POST",
+          contentType: "application/json; charset=utf-8",
+          url: "/superuser",
+          dataType: "json",
+          data: JSON.stringify
+          ({
+          'code': $("#code").val(),
+
+          }),
+          success: function (data) {
+            if (data.response == 'success'){
+            Cookies.set('superuser',data.code);
+            window.location = "/home/superuser";
+            }
+
+            if (data.response == 'failure'){
+          $("#error").text('Wrong Password')
+            }
+            }
+            })
+
+
+            })
+
+    </script>
+  </body>
+</html>
