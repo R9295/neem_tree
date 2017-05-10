@@ -8,6 +8,7 @@
 
 
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css">
 
 
     <!-- Bootstrap CSS -->
@@ -51,22 +52,22 @@
     <div class="container">
     <form  method="post" enctype="multipart/form-data" id="form_data" action="/add/intern/staff" class="form-control"><br>
     Name
-    <input type="text"  class="form-control" name="name"        class="form-control"><br>
+    <input type="text"  class="form-control" name="name"        class="form-control" required><br>
 
     Start Date
-    <input type="date"  class="form-control" name="start_date"  class="form-control"><br>
+    <input type="text"  class="form-control" name="start_date"  id="start_date" class="form-control" required><br>
 
     End Date
-    <input type="date"  class="form-control" name="end_date"   class="form-control"><br>
+    <input type="text"  class="form-control" name="end_date" id="end_date"   class="form-control" required><br>
 
     Email
-    <input type="text"  class="form-control" name="email"        class="form-control"><br>
+    <input type="text"  class="form-control" name="email"        class="form-control" required><br>
 
     Phone Number
-    <input type="text"  class="form-control" name="phone_number" class="form-control"><br>
+    <input type="text"  class="form-control" name="phone_number" class="form-control" required><br>
 
     Unit Name
-    <input type="text"  class="form-control" name="unit_name"  class="form-control"><br>
+    <input type="text"  class="form-control" name="unit_name"  class="form-control" required><br>
     <input type="file"  value="Browse"       name="img"><br><br>
     <h3 style="color:red;">{{error}}</h3>
     
@@ -85,7 +86,17 @@
     
    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js"  crossorigin="anonymous"></script>
+
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+    <script>
+    $('#start_date').datepicker({
+    });
+
+ $('#end_date').datepicker({
+    });
+  </script>
   </body>
 
 </html>

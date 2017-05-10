@@ -8,9 +8,11 @@ db.intern.delete_many({})
 
 #Unit Holder
 db.unit_holder.delete_many({})
+db.approve_unit_holder.delete_many({})
 
 #Staff
 db.staff.delete_many({})
+db.approve_staff.delete_many({})
 
 #Active
 db.active.delete_many({})

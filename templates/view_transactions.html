@@ -101,7 +101,7 @@
   </thead>
   <tbody>
   {% for i in transactions %}
-    <tr onclick="backtrack('{{i.intern_name}}','{{i.amount}}','{{i.type}}')" class="hover">
+    <tr>
       <td class="mdl-data-table__cell--non-numeric ">{{i['_id']}}</td>
       <td class="mdl-data-table__cell--non-numeric ">{{i['intern_name']}}</td>
       <td class="mdl-data-table__cell--non-numeric ">{{i['amount']}}</td>

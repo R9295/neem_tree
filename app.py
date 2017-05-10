@@ -282,16 +282,16 @@ def add_an_intern():
 	
 
 					start_date = request.form['start_date']
-					start_year = start_date[0:4]
-					start_month = start_date[5:7]
-					start_day = start_date[8:10]
-					start_date= start_day+'/'+start_month+'/'+start_year
+					start_month = start_date[0:3]
+					start_day = start_date[3:6]
+					start_year = start_date[6:10]
+					start_date= start_day+start_month+start_year
 
 					end_date = request.form['end_date']
-					end_year = end_date[0:4]
-					end_month = end_date[5:7]
-					end_day = end_date[8:10]
-					end_date= end_day+'/'+end_month+'/'+end_year
+					end_month = end_date[0:3]
+					end_day = end_date[3:6]
+					end_year = end_date[6:10]
+					end_date= start_day+start_month+start_year
 
 
 
@@ -360,17 +360,17 @@ def add_intern_staff():
 				
 
 				start_date = request.form['start_date']
-				start_year = start_date[0:4]
-				start_month = start_date[5:7]
-				start_day = start_date[8:10]
-				start_date= start_day+'/'+start_month+'/'+start_year
+				start_month = start_date[0:3]
+				start_day = start_date[3:6]
+				start_year = start_date[6:10]
+				start_date= start_day+start_month+start_year
 				
 
 				end_date = request.form['end_date']
-				end_year = end_date[0:4]
-				end_month = end_date[5:7]
-				end_day = end_date[8:10]
-				end_date= end_day+'/'+end_month+'/'+end_year
+				end_month = end_date[0:3]
+				end_day = end_date[3:6]
+				end_year = end_date[6:10]
+				end_date= start_day+start_month+start_year
 
 
 				email = request.cookies.get('email')
@@ -1043,7 +1043,7 @@ def approve_interns():
 			#Logging
 			log_data = {
 			"intern_name": data['name'],
-			"type": "approve",
+			"type": "approve_intern",
 			"done_by": user['name'],
 			"date":strftime("%a, %d %b %Y", gmtime())
 			}
