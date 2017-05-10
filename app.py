@@ -179,9 +179,13 @@ def home_unit():
 #Create Neem Tree Staff API
 @app.route("/add_staff", methods=['POST'])
 def add_staff():
-	user = db.staff.find({'email':request.json['email']}).count()
 	unit = db.unit_holder.find({'email':request.json['email']}).count()
-	if user != 0 or unit != 0:
+	approve_unit = db.unit_holder.find({'email':request.json['email']}).count()
+	user = db.staff.find({'email':request.json['email']}).count()
+	approve_user = db.approve_staff.find({'email':request.json['email']}).count()
+	user = unit+approve_unit+user+approve_user
+
+	if user != 0:
 		response = {}
 		response['response'] = "exists"
 		response = json.dumps(response)
@@ -212,12 +216,17 @@ def add_staff():
 @app.route("/add_unit_holder", methods=['POST'])
 def add_unit_holder():
 	unit = db.unit_holder.find({'email':request.json['email']}).count()
+	approve_unit = db.unit_holder.find({'email':request.json['email']}).count()
 	user = db.staff.find({'email':request.json['email']}).count()
-	if user != 0 or unit != 0	:
+	approve_user = db.approve_staff.find({'email':request.json['email']}).count()
+	user = unit+approve_unit+user+approve_user
+
+	if user != 0:
 		response = {}
-		response['response'] = "failure"
+		response['response'] = "exists"
 		response = json.dumps(response)
 		return response
+
 	else:
 		data ={
 		"unit_name":request.json['unit_name'],
