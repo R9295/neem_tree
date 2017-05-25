@@ -3,9 +3,9 @@ client = MongoClient()
 db = client.neem_tree
 
 #Interns
-print db.intern.find().count()+ '  Interns'
+print str(db.intern.find().count())+ '  Interns'
 
-
+'''
 #Unit Holder
 print db.unit_holder.find().count()+ '  Unit Holders'
 print db.approve_unit_holder.find().count()+ '  Approve Unit Holder'
@@ -25,3 +25,4 @@ print db.log.find().count()+ '  Log'
 
 #approve interns 
 print db.approve_intern.find().count()+ '  Approve Interns'
+'''
