@@ -25,4 +25,3 @@ print db.log.find().count()
 
 #approve interns 
 print db.approve_intern.find().count()
-'''
