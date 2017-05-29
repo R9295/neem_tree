@@ -1208,83 +1208,120 @@ def create_super():
 
 @app.route('/home/superuser', methods=['GET','POST'])
 def home_superuser():
-	staff_to_approve = db.approve_staff.find().count()
-	unit_holders_to_approve = db.approve_unit_holder.find().count()
-	all_staff = db.staff.find()
-	all_units = db.unit_holder.find()
+	cookie = request.cookies.get('superuser')
+	user = db.active.find({'code':cookie}).count()
+	print cookie
+	if user != 0:
+		staff_to_approve = db.approve_staff.find().count()
+		unit_holders_to_approve = db.approve_unit_holder.find().count()
+		all_staff = db.staff.find()
+		all_units = db.unit_holder.find()
+	else:
+		return redirect('/superuser')
 	return render_template('super_user.html',staff=staff_to_approve,unit_holder=unit_holders_to_approve)
 
 @app.route('/approve/superuser/staff', methods=['GET','POST'])
 def superuser_approve_staff():
-	type = 'Staff'
-	type_url = 'staff'
-	to_approve = db.approve_staff.find()
-	if request.method == 'POST' and request.json['type'] == 'approve':
-		#finding the staff
-		staff = db.approve_staff.find_one({'_id':ObjectId(request.json['id'])})
+	cookie = request.cookies.get('superuser')
+	if cookie == None:
+		return redirect('/superuser')
+	user = db.active.find({'code':cookie}).count()
+	if user != 0:
+		type = 'Staff'
+		type_url = 'staff'
+		to_approve = db.approve_staff.find()
+		if request.method == 'POST' and request.json['type'] == 'approve':
+			#finding the staff
+			staff = db.approve_staff.find_one({'_id':ObjectId(request.json['id'])})
 
-		#setting data
-		data ={
-		"name":staff['name'],
-		"password": staff['password'],
-		"email":staff['email'],
-		"phone_number":staff['phone_number']
-		}
+			#setting data
+			data ={
+			"name":staff['name'],
+			"password": staff['password'],
+			"email":staff['email'],
+			"phone_number":staff['phone_number']
+			}
 
-		db.staff.insert_one(data)
-		db.approve_staff.delete_one({'_id':ObjectId(request.json['id'])})
-		response = {}
-		response['response'] = 'success'
-		response = json.dumps(response)
-		return response
+			db.staff.insert_one(data)
+			db.approve_staff.delete_one({'_id':ObjectId(request.json['id'])})
+			response = {}
+			response['response'] = 'success'
+			response = json.dumps(response)
+			return response
 
 
-	if request.method == 'POST' and request.json['type'] == 'disapprove':
-		unit = db.approve_staff.find_one({'_id':ObjectId(request.json['id'])})
-		db.approve_staff.delete_one({'_id':ObjectId(request.json['id'])})
-		response = {}
-		response['response'] = 'success'
-		response = json.dumps(response)
-		return response  
-
+		if request.method == 'POST' and request.json['type'] == 'disapprove':
+			unit = db.approve_staff.find_one({'_id':ObjectId(request.json['id'])})
+			db.approve_staff.delete_one({'_id':ObjectId(request.json['id'])})
+			response = {}
+			response['response'] = 'success'
+			response = json.dumps(response)
+			return response  
+	else:
+		return redirect('/superuser')
 	return render_template('superuser_approve.html',type=type,to_approve=to_approve,type_url=type_url)
 
 @app.route('/approve/superuser/unit', methods=['GET','POST'])
 def superuser_approve_unit():
-	type = 'Unit Holders'
-	type_url = 'unit'
-	to_approve = db.approve_unit_holder.find()
-	if request.method == 'POST' and request.json['type'] == 'approve':
-		#finding the staff
-		unit = db.approve_unit_holder.find_one({'_id':ObjectId(request.json['id'])})
+	cookie = request.cookies.get('superuser')
+	if cookie == None:
+		return redirect('/superuser')
+	user = db.active.find({'code':cookie}).count()
+	if user != 0:
+		type = 'Unit Holders'
+		type_url = 'unit'
+		to_approve = db.approve_unit_holder.find()
+		if request.method == 'POST' and request.json['type'] == 'approve':
+			#finding the staff
+			unit = db.approve_unit_holder.find_one({'_id':ObjectId(request.json['id'])})
 
-		#setting data
-		data ={
-		"unit_name":unit['unit_name'],
-		"name":unit['name'],
-		"password": unit['password'],
-		"email":unit['email'],
-		"phone_number":unit['phone_number']
-		}
+			#setting data
+			data ={
+			"unit_name":unit['unit_name'],
+			"name":unit['name'],
+			"password": unit['password'],
+			"email":unit['email'],
+			"phone_number":unit['phone_number']
+			}
 
-		db.unit_holder.insert_one(data)
-		db.approve_unit_holder.delete_one({'_id':ObjectId(request.json['id'])})
-		response = {}
-		response['response'] = 'success'
-		response = json.dumps(response)
-		return response
+			db.unit_holder.insert_one(data)
+			db.approve_unit_holder.delete_one({'_id':ObjectId(request.json['id'])})
+			response = {}
+			response['response'] = 'success'
+			response = json.dumps(response)
+			return response
 
-	if request.method == 'POST' and request.json['type'] == 'disapprove':
-		unit = db.approve_unit_holder.find_one({'_id':ObjectId(request.json['id'])})
-		db.approve_unit_holder.delete_one({'_id':ObjectId(request.json['id'])})
-		response = {}
-		response['response'] = 'success'
-		response = json.dumps(response)
-		return response
+		if request.method == 'POST' and request.json['type'] == 'disapprove':
+			unit = db.approve_unit_holder.find_one({'_id':ObjectId(request.json['id'])})
+			db.approve_unit_holder.delete_one({'_id':ObjectId(request.json['id'])})
+			response = {}
+			response['response'] = 'success'
+			response = json.dumps(response)
+			return response
+	else:
+		return redirect('/superuser')
 	return render_template('superuser_approve.html',type=type,type_url=type_url,to_approve=to_approve)
 
 
+@app.route('/superuser/list', methods=['GET','POST'])
+def list():
+	cookie = request.cookies.get('superuser')
+	if cookie == None:
+		return redirect('/superuser')
+	user = db.active.find({'code':cookie}).count()
+	if user != 0:
+		list_unit = []
+		list_staff = []
+		unit_holders = db.unit_holder.find()
+		staff = db.staff.find()
+		for i in unit_holders:
+			list_unit.append([i['name'],i['email'], i['unit_name'],str(i['_id'])])
+		for i in staff:
+			list_staff.append([   i['name'],i['email'],str(i['_id'])])
 
+
+
+	return render_template('superuser_admin_list.html',unit_holder=list_unit,staff=list_staff)	
 
 if __name__ == "__main__":
 	configure_uploads(app, photos)

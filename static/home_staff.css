@@ -8,8 +8,8 @@
 	color:red !important;
 }
 .navbar{
-	font-family: 'Raleway', sans-serif;
-	background-color: black;
+	font-family: 'Raleway', sans-serif !important;
+	background-color: black !important;
 
 }
 
