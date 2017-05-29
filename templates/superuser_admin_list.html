@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+        <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+        <link rel= "stylesheet" href= "{{url_for('static',filename='home_staff.css') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" >
+  </head>
+  <body>
+
+   <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" href="#" style="color:red;font-size:1.2vw;">NEEM TREE</a>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/home/superuser" style="color:red;font-size:1vw;">Home <span class="sr-only">(current)</span></a>
+      </li>
+    </ul>
+  </div>
+  
+<div class="dropdown">
+  <a class="btn dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 1vw;color:red;">
+  superuser
+  </a>
+
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+    <a class="dropdown-item" href="#">Settings</a>
+    <a class="dropdown-item" href="/logout">Logout</a>
+  </div>
+</div>
+</nav>
+
+<h1 align="center">Unit Holders</h1>
+  <div class="container">
+  <div class="row">
+
+
+    {% for i in unit_holder %}
+    <div class="card col-sm-3">
+  <div class="card-block" >
+   {{i[0]}}
+   <br>
+   {{i[1]}}
+   <br>
+   {{i[2]}}
+  </div>
+  </div>
+{% endfor %}
+
+
+</div>
+</div>
+
+
+    
+
+    <br><br><br>
+<h1 align="center">Staff</h1>
+  <div class="container">
+  <div class="row">
+
+
+    {% for i in staff %}
+    <div class="card col-sm-3">
+  <div class="card-block" >
+   {{i[0]}}
+   <br>
+   {{i[1]}}
+  </div>
+  </div>
+{% endfor %}
+
+
+</div>
+</div>
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" ></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
+  </body>
+</html>
