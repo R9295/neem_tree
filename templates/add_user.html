@@ -20,7 +20,7 @@
     <input type="text" name="" class="form-control" id="person_name" placeholder="Your Name">
     <input type="password" name="" class="form-control" id="password" placeholder="Password">
     <input type="text" name="" class="form-control" id="unit_name" placeholder="Unit Name">
-    <input type="text" name="" class="form-control" id="email" placeholder="Email">
+    <input type="email" name="" class="form-control" id="email" placeholder="Email">
     <input type="text" name="" class="form-control" id="phone_number" placeholder="Phone Number">
     
     Are you a human?<h3 id="numbers"></h3>
@@ -30,18 +30,6 @@
     <button id="submit" class="btn btn-md" style="background-color: white;border-color:black;color:black;" disabled />Sumbit</button>
        
     </div>
-<br><br><br><br>
-<h1 align="center">Neem Tree Staff</h1>
-    <div class="container">
-    <input type="text" name="" class="form-control" id="name_neem" placeholder="Name">
-    <input type="password" name="" class="form-control" id="password_neem" placeholder="Password">
-    <input type="text" name="" class="form-control" id="email_neem" placeholder="Email">
-    <input type="text" name="" class="form-control" id="phone_number_neem" placeholder="Phone Number">
-    Are you a human?<h3 id="numbers_staff"></h3>
-
-
-    <div id="callback_staff" style="color:red;"></div>
-    <button id="neem_submit" class="btn btn-md" style="background-color: white;border-color:black;color:black;" disabled />Sumbit</button>
       
     </div>
 
@@ -61,14 +49,12 @@
   
   var captcha_1 = Math.floor((Math.random() * 10) + 1);
   var captcha_2 = Math.floor((Math.random() * 10) + 1);
-  var captcha_3 = Math.floor((Math.random() * 10) + 1);
-  var captcha_4 = Math.floor((Math.random() * 10) + 1);
+
   var captcha_total = captcha_2 + captcha_1
   var captcha_total_staff = captcha_3 + captcha_4
 
 
   $("#numbers").html(captcha_1+'+'+captcha_2+'='+'<input type="text" name="total" id="total" class="col-md-1">');
-  $("#numbers_staff").html(captcha_3+'+'+captcha_4+'='+'<input type="text" name="total" id="total_staff" class="col-md-1">');
 
 
   $("#total").on('keyup', function(){
@@ -89,28 +75,6 @@
     else{
       $("#callback_unit").text('')
       $("#submit").prop('disabled', false);
-    }
-  });
-
-
-  $("#total_staff").on('keyup', function(){
-    jQuery.fn.extend({
-        disable: function(state) {
-            return this.each(function() {
-                this.disabled = state;
-            });
-        }
-    });
-    if ($("#total_staff").val() != captcha_total_staff)
-
-    {
-      $("#neem_submit").prop('disabled', true);
-    $("#callback_staff").text('incorrect captcha!')
-
-    }
-    else{
-      $("#callback_staff").text('')
-      $("#neem_submit").prop('disabled', false);
     }
   });
 
@@ -176,58 +140,6 @@
   });
 
     
-
-   //Submiting Neem Tree Staff
-  $("#neem_submit").on('click', function(){
-    var name = $("#name_neem").val();
-    var password = $("#password_neem").val();
-    var email = $("#email_neem").val();
-    var phone_number = $("#phone_number_neem").val();
-    
-    //checking if values are not empty, if not, post!
-    if (person_name.length ===0) {
-      $("#callback_staff").text('Person Name is empty');
-    }
-    else if(password.length === 0){
-      $("#callback_staff").text('Password is empty'); 
-    }
-
-    else if(email.length === 0){
-      $("#callback_staff").text('Email is empty');
-
-    }
-  else if(phone_number.length === 0){
-      $("#callback_staff").text('Phone Number is empty');
-
-    }
-
-    else{
-      data = JSON.stringify({'name':name,'password':password,'email':email,'phone_number':phone_number})
-         
-   $.ajax({
-  type: "POST",
-  url: '/add_staff',
-  contentType:"application/json; charset=utf-8",
-  data: data,
-  success: function(data){
-
-
-    if (data.response == 'success'){
-    $("#callback_staff").html('<h3 style="color:green !important;">You are waiting to be approved by the Superuser!<h3><br>');
-  }  
-    if (data.response == 'failure'){
-    $("#callback_staff").html("<h3 style='color:red !important;'>Can't insert in Database<h3>");
-  }  
-    if (data.response == 'exists'){
-    $("#callback_staff").html('<h3 style="color:red !important;">Email already exists<h3>');
-  }
-  },
-  dataType: "json"
-});
-  
-
-    }
-  });
 
 </script>
 </html>

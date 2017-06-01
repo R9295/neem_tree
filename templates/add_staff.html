@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <title>Add Staff</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+ <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  </head>
+     <link rel= "stylesheet" href= "{{url_for('static',filename='home_staff.css') }}">
+
+  
+  <body style="font-family: 'Raleway', sans-serif;">
+  
+  
+ <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" href="#" style="color:red;font-size:1.2vw;">NEEM TREE</a>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/home/superuser" style="color:red;font-size:1vw;">Home <span class="sr-only">(current)</span></a>
+      </li>
+    </ul>
+  </div>
+  
+<div class="dropdown">
+  <a class="btn dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 1vw;color:red;">
+  superuser
+  </a>
+
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+    <a class="dropdown-item" href="#">Settings</a>
+    <a class="dropdown-item" href="/logout">Logout</a>
+  </div>
+</div>
+</nav>
+
+<br><br><br><br><br>
+
+
+<h1 align="center">Neem Tree Staff</h1>
+    <div class="container">
+    <input type="text" name="" class="form-control" id="name_neem" placeholder="Name">
+    <input type="password" name="" class="form-control" id="password_neem" placeholder="Password">
+    <input type="email" name="" class="form-control" id="email_neem" placeholder="Email">
+    <input type="text" name="" class="form-control" id="phone_number_neem" placeholder="Phone Number">
+    Are you a human?<h3 id="numbers_staff"></h3>
+
+
+    <div id="callback_staff" style="color:red;"></div>
+    <button id="neem_submit" class="btn btn-md" style="background-color: white;border-color:black;color:black;" disabled />Sumbit</button>
+      
+    </div>
+
+
+
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script
+        src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  </body>
+
+  <script type="text/javascript">
+  
+
+  var captcha_3 = Math.floor((Math.random() * 10) + 1);
+  var captcha_4 = Math.floor((Math.random() * 10) + 1);
+  var captcha_total_staff = captcha_3 + captcha_4
+
+
+  $("#numbers_staff").html(captcha_3+'+'+captcha_4+'='+'<input type="text" name="total" id="total_staff" class="col-md-1">');
+
+
+
+  $("#total_staff").on('keyup', function(){
+    jQuery.fn.extend({
+        disable: function(state) {
+            return this.each(function() {
+                this.disabled = state;
+            });
+        }
+    });
+    if ($("#total_staff").val() != captcha_total_staff)
+
+    {
+      $("#neem_submit").prop('disabled', true);
+    $("#callback_staff").text('incorrect captcha!')
+
+    }
+    else{
+      $("#callback_staff").text('')
+      $("#neem_submit").prop('disabled', false);
+    }
+  });
+
+    
+
+   //Submiting Neem Tree Staff
+  $("#neem_submit").on('click', function(){
+    var name = $("#name_neem").val();
+    var password = $("#password_neem").val();
+    var email = $("#email_neem").val();
+    var phone_number = $("#phone_number_neem").val();
+    
+    //checking if values are not empty, if not, post!
+    if (name.length ===0) {
+      $("#callback_staff").text('Your Name is empty');
+    }
+    else if(password.length === 0){
+      $("#callback_staff").text('Password is empty'); 
+    }
+
+    else if(email.length === 0){
+      $("#callback_staff").text('Email is empty');
+
+    }
+  else if(phone_number.length === 0){
+      $("#callback_staff").text('Phone Number is empty');
+
+    }
+
+    else{
+      data = JSON.stringify({'name':name,'password':password,'email':email,'phone_number':phone_number})
+         
+   $.ajax({
+  type: "POST",
+  url: '/add_staff',
+  contentType:"application/json; charset=utf-8",
+  data: data,
+  success: function(data){
+
+
+    if (data.response == 'success'){
+    $("#callback_staff").html('<h3 style="color:green !important;">You are waiting to be approved by the Superuser!<h3><br>');
+  }  
+    if (data.response == 'failure'){
+    $("#callback_staff").html("<h3 style='color:red !important;'>Can't insert in Database<h3>");
+  }  
+    if (data.response == 'exists'){
+    $("#callback_staff").html('<h3 style="color:red !important;">Email already exists<h3>');
+  }
+  },
+  dataType: "json"
+});
+  
+
+    }
+  });
+
+</script>
+</html>

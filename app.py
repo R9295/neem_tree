@@ -1323,6 +1323,17 @@ def list():
 
 	return render_template('superuser_admin_list.html',unit_holder=list_unit,staff=list_staff)	
 
+
+@app.route('/superuser/add/staff')
+def add_staff_super():
+	cookie = request.cookies.get('superuser')
+	if cookie == None:
+		return redirect('/superuser')
+	user = db.active.find({'code':cookie}).count()
+	if user != 0:
+		pass
+	return render_template('add_staff.html')
+
 if __name__ == "__main__":
 	configure_uploads(app, photos)
-	app.run(debug=True)
+	app.run()
