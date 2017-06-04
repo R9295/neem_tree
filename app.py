@@ -13,12 +13,14 @@ from flask_uploads import UploadSet, configure_uploads, IMAGES
 from datetime import *
 import datetime
 from bson.json_util import dumps
-
-
+from validate_email import validate_email
+from flask_mail import Mail, Message
+from r import r_email, r_password
 #Connecting to DB
 
 client = MongoClient(connect=False)
 db = client.neem_tree
+
 
 
 
@@ -29,14 +31,22 @@ def key_gen(size=10, chars=string.ascii_uppercase + string.digits):
 
 ph = PasswordHasher()
 
+
 app = Flask(__name__)
 
+#configuring mail server
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = r_email
+app.config['MAIL_PASSWORD'] = r_password
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
 
 
 #Configuring where photos should be uploaded.
 photos = UploadSet('photos', IMAGES)
 app.config['UPLOADED_PHOTOS_DEST'] = 'static/img/'
-configure_uploads(app, photos)
 
 
 #Login for Unit Holder and Neem Tree Staff
@@ -1305,23 +1315,130 @@ def superuser_approve_unit():
 
 @app.route('/superuser/list', methods=['GET','POST'])
 def list():
+	list_unit = []
+	list_staff = []
 	cookie = request.cookies.get('superuser')
 	if cookie == None:
 		return redirect('/superuser')
 	user = db.active.find({'code':cookie}).count()
+
+	if request.method == 'POST':
+		unit = db.unit_holder.find({'email':request.json['old_email']}).count()
+		staff = db.staff.find({'email':request.json['old_email']}).count()
+
+		if unit != 0:
+			unit = db.unit_holder.find_one({'email':request.json['old_email']})			
+			if request.json['email'] != unit['email']:
+				is_valid = validate_email(request.json['email'],verify=True)
+				if is_valid == False:
+					response = {}
+					response['response'] = 'invalid'
+					response = json.dumps(response)
+					return response
+				else:
+					unit['email'] = request.json['email']
+					db.unit_holder.save(unit)
+					response = {}
+					response['response'] = 'success'
+					response = json.dumps(response)
+					return response
+
+		elif staff != 0:
+			staff = db.staff.find_one({'email':request.json['old_email']})			
+			if request.json['email'] != unit['email']:
+				is_valid = validate_email(request.json['email'],verify=True)
+				if is_valid == False:
+					response = {}
+					response['response'] = 'invalid'
+					response = json.dumps(response)
+					return response
+				else:
+					staff['email'] = request.json['email']
+					db.staff.save(staff)
+					response = {}
+					response['response'] = 'success'
+					response = json.dumps(response)
+					return response
 	if user != 0:
-		list_unit = []
-		list_staff = []
+		
 		unit_holders = db.unit_holder.find()
 		staff = db.staff.find()
 		for i in unit_holders:
 			list_unit.append([i['name'],i['email'], i['unit_name'],str(i['_id'])])
 		for i in staff:
-			list_staff.append([   i['name'],i['email'],str(i['_id'])])
+			list_staff.append([i['name'],i['email'],str(i['_id'])])
+
 
 
 
 	return render_template('superuser_admin_list.html',unit_holder=list_unit,staff=list_staff)	
+
+
+#send mail
+@app.route('/send_mail', methods=['POST'])
+def send_mail_reset():
+	msg = Message("Hello",
+                 sender="aarnavbos@gmail.com",
+                 recipients=[request.json['email']])
+	key = key_gen()
+	data = {
+	'key': key,
+	'email':request.json['email']
+	}
+	db.reset.insert_one(data)
+	msg.body = 'Please click this URL to restore your password. https://neemtree.org.in/reset/%s/%s'%(key,request.json['email'])
+	mail.send(msg)
+	response = {}
+	response['response'] = 'success'
+	response = json.dumps(response)
+	return response
+
+@app.route('/reset/<key>/<email>', methods=['GET','POST'])
+def reset_pass(key,email):
+	succ = ''
+	fail = ''
+	data = db.reset.find({'email':email,'key':key}).count()
+	if data != 0:
+		if request.method == 'POST':
+			unit = db.unit_holder.find({'email': email}).count()
+			staff = db.staff.find({'email': email}).count()
+			if unit != 0:
+				unit = db.unit_holder.find_one({'email':email})
+				unit['password'] = ph.hash(request.form['password'])
+				db.unit_holder.save(unit)
+				succ = 'Success'
+				db.reset.delete_one({'email':email})
+
+			elif staff != 0:
+				staff = db.staff.find_one({'email':email})
+				staff['password'] = ph.hash(request.form['password'])
+				db.staff.save(staff)
+				succ = 'Success'
+				db.reset.delete_one({'email':email})
+
+
+
+		return render_template('reset_pass.html',succ=succ,fail=fail)
+
+@app.route('/delet', methods=['GET','POST'])
+def delet_this():
+	unit = db.unit_holder.find({'_id':ObjectId(request.json['id'])}).count()
+	staff = db.staff.find({'_id':ObjectId(request.json['id'])}).count()
+	if staff != 0 and unit == 0:
+		db.staff.delete_one({'_id':ObjectId(request.json['id'])})
+		response = {}
+		response['response'] = 'success'
+		response = json.dumps(response)
+		return response
+
+	if unit != 0 and staff == 0:
+		db.unit_holder.delete_one({'_id':ObjectId(request.json['id'])})
+		response = {}
+		response['response'] = 'success'
+		response = json.dumps(response)
+		return response
+
+
 
 
 @app.route('/superuser/add/staff')
@@ -1336,4 +1453,4 @@ def add_staff_super():
 
 if __name__ == "__main__":
 	configure_uploads(app, photos)
-	app.run()
+	app.run(debug=True)

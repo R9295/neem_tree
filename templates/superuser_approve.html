@@ -89,7 +89,8 @@ $.ajax({
   dataType: "json",
   data: JSON.stringify({'id': id, 'type':'approve'}),
   success: function (data) {
-  $("#callback").text('Successfully appproved!')
+  alert('Successfully approved')
+  location.reload();
 
 
     }
@@ -109,8 +110,8 @@ $.ajax({
   dataType: "json",
   data: JSON.stringify({'id': id, 'type':'disapprove'}),
   success: function (data) {
-   $("#callback").text('Successfully disapproved!')
-
+   alert('Successfully disapproved')
+   location.reload();
 
     }
 

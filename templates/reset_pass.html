@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+   <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" >
+  </head>
+  <body style="font-family: 'Raleway', sans-serif;">
+    <div class="container">
+    <div align="center">
+    <form method="POST">
+    <h1 >Hello,Please reset your password!</h1>
+    <br><br>
+    New Password
+    <input type="password" id="pass_one" class="form-control col-lg-6" name="password">
+    <br>
+    New Password again
+    <input type="password" id="pass_two" class="form-control col-lg-6">
+    <br><br>
+    <h4 id="error_text" style="color:red">{{fail}}</h4>
+    <h4 id="succ_text" style="color:green">{{succ}}</h4>
+    <input type="submit" id="submit" class="btn btn-md btn-success" disabled>
+    </form>
+    </div>
+    </div>
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" ></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
+    <script>
+
+         $("#pass_two").on('keyup', function(){
+                if ($("#pass_one").val() != $("#pass_two").val()){
+        $("#error_text").text("Fields dont match")
+
+      }
+      if ($("#pass_one").val() == $("#pass_two").val()){
+        $("#error_text").empty()
+        $("#submit").prop('disabled', false);
+      }
+
+         })
+
+        
+
+    </script>
+
+  </body>
+
+
+</html>
