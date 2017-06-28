@@ -308,6 +308,7 @@ def add_an_intern():
 
 					email = request.cookies.get('email')
 					user = db.unit_holder.find_one({'email'  : email })
+					filename = photos.save(request.files['img'])
 
 					data = {
 					"name":request.form['name'],
@@ -317,7 +318,7 @@ def add_an_intern():
 					"start_date":start_date,
 					"end_date":end_date,
 					"balance": 0,
-					"img": photos.save(request.files['img']),
+					"img": filename,
 					"scheme":[],
 					"created_by":user['name']
 					}
