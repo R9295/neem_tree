@@ -41,13 +41,14 @@ app.config['MAIL_USERNAME'] = r_email
 app.config['MAIL_PASSWORD'] = r_password
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
+app.config['UPLOADED_PHOTOS_DEST'] = 'static/img/'
 mail = Mail(app)
 
 
 #Configuring where photos should be uploaded.
-photos = UploadSet('photos', IMAGES)
-app.config['UPLOADED_PHOTOS_DEST'] = 'static/img/'
 
+
+photos = UploadSet('photos', IMAGES)
 
 #Login for Unit Holder and Neem Tree Staff
 @app.route("/")
