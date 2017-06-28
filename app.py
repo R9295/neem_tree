@@ -305,7 +305,7 @@ def add_an_intern():
 					end_date= start_day+start_month+start_year
 
 
-
+					photos = UploadSet('photos', IMAGES)
 					email = request.cookies.get('email')
 					user = db.unit_holder.find_one({'email'  : email })
 					filename = photos.save(request.files['img'])
