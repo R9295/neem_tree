@@ -41,14 +41,16 @@ app.config['MAIL_USERNAME'] = r_email
 app.config['MAIL_PASSWORD'] = r_password
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
-app.config['UPLOADED_PHOTOS_DEST'] = 'static/img/'
+#app.config['UPLOADED_PHOTOS_DEST'] = 'static/img/'
 mail = Mail(app)
 
 
 #Configuring where photos should be uploaded.
 
 
-photos = UploadSet('photos', IMAGES)
+photos = UploadSet('photos', ('jpeg', 'jpg' , 'png' , 'svg'))
+app.config['UPLOADED_PHOTOS_DEST'] = 'static/img/'
+configure_uploads(app, photos)
 
 #Login for Unit Holder and Neem Tree Staff
 @app.route("/")
@@ -1454,5 +1456,4 @@ def add_staff_super():
 	return render_template('add_staff.html')
 
 if __name__ == "__main__":
-	configure_uploads(app, photos)
 	app.run()
